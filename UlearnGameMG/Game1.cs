@@ -1,4 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,6 +12,7 @@ namespace UlearnGameMG
         private Map Map_map;
         private Texture2D block;
         private Texture2D mark;
+        private Texture2D pers;
         private SpriteFont font;
         Vector2 position = Vector2.Zero;
         private readonly Vector2 Scale;
@@ -36,7 +37,7 @@ namespace UlearnGameMG
         { 
             base.Initialize();
             Map_map = new Map(block);
-            
+            Map_map.CharacterAdd(new Сharacter("aboba", new Vector2(1, 1), pers, 3));
             
         }
 
@@ -46,6 +47,7 @@ namespace UlearnGameMG
             block = Content.Load<Texture2D>("isometric_pixel_0014");
             mark = Content.Load<Texture2D>("mark");
             font = Content.Load<SpriteFont>("arial");
+            pers = Content.Load<Texture2D>("pers2");
         }
 
         protected override void Update(GameTime gameTime)
@@ -55,11 +57,7 @@ namespace UlearnGameMG
 
             MouseState currentMouseState = Mouse.GetState();
 
-            if (currentMouseState.X != lastMouseState.X ||
-                currentMouseState.Y != lastMouseState.Y)
-                position = new Vector2(currentMouseState.X, currentMouseState.Y);
-            lastMouseState = currentMouseState;
-            Map_map.CheckMouseCell(position);
+            Map_map.CheckMouseCell(currentMouseState);
 
             base.Update(gameTime);
         }
