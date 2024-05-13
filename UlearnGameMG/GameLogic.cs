@@ -14,8 +14,7 @@ namespace UlearnGameMG
         public Map map;
         public List<Character> characters = new List<Character>();
         public List<Enemies> enemies = new();
-        public Point mousePoint = new();
-        public Vector2 mousePos = new();
+        public Character choise = null;
 
         public GameLogic() { }
 
@@ -24,31 +23,32 @@ namespace UlearnGameMG
             characters.Add(character);
         }
 
-        public bool CharacterMove(Character character, Point point)
+        public bool CharacterMove(Point point)
         {
-            var list = map.CanMove(character.position, character.move);
+            var list = map.CanMove(choise.position, choise.move);
             if (list.Contains(point))
             {
-                character.Move(point);
+                choise.Move(point);
                 return true;
             }
             else return false;
         }
 
-        public bool SpellActivate(Point fPoint, Spell spell, Point atPoint)
+        public bool SpellActivate(Point fPoint, Spell spell, Point tPoint)
         {
-
+            if (spell.atacksPoints.All(x => x + fPoint != tPoint)) return false;
             foreach (var atPoint in spell.splashPoints)
             {
-                var r = map.gameObjects.Where(x => x.position == point + atPoint.Item1).FirstOrDefault();
+                var r = map.gameObjects.Where(x => x.position == tPoint + atPoint.Item1).FirstOrDefault();
                 if (r != default) r.Hp -= atPoint.Item2;
             }
+            return true;
         }
 
         public void MapLoad(Map map) 
         {
             this.map = map;
-            
+            characters.ForEach(x => map.GameObjectAdd(x));
         }
     }
 

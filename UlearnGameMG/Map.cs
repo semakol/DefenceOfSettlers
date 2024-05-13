@@ -14,8 +14,6 @@ namespace UlearnGameMG
     public class Map
     {
         //public Vector2 size = new Vector2(126, 75); 
-        private MapCell[,] mapCells = new MapCell[8, 8];
-        public List<GameObject> gameObjects = new();
         //private Vector2 rift = new Vector2(140, 300);
         //private Vector2 mousePos = new Vector2(-1, -1);
         //private Point mousePoint = new Point(-1, -1);
@@ -24,6 +22,8 @@ namespace UlearnGameMG
         //private Point nowChoiseCell = new Point(-1,-1);
         //public List<Point> canMove = new List<Point>();
         //public List<Point> canSpell = new List<Point>();
+        public MapCell[,] mapCells = new MapCell[8, 8];
+        public List<GameObject> gameObjects = new();
         public Mode mode = Mode.Choise; 
 
         public enum Mode

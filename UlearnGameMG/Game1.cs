@@ -21,6 +21,7 @@ namespace UlearnGameMG
         private readonly Matrix screenXform;
         private bool click = false;
         private GameLogic Game;
+        private Draw draw;
         
 
         public Game1()
@@ -39,8 +40,11 @@ namespace UlearnGameMG
         { 
             base.Initialize();
             Map_map = new Map(block);
-            Map_map.CharacterAdd(new Character("aboba", new Point(1, 1), pers, 3));
-            Map_map.CharacterAdd(new Character("aboba2", new Point(1, 2), pers, 3));
+            Game = new GameLogic();
+            Game.AddCharacter(new Character("aboba", new Point(1, 1), pers, 3));
+            Game.AddCharacter(new Character("aboba2", new Point(1, 2), pers, 3));
+            Game.MapLoad(Map_map);
+            draw = new(_spriteBatch);
         }
 
         protected override void LoadContent()
@@ -54,13 +58,10 @@ namespace UlearnGameMG
 
         protected override void Update(GameTime gameTime)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !click) { Map_map.ChangeMode(); click = true; }
             if (Keyboard.GetState().IsKeyUp(Keys.Escape)) { click = false; }
 
             MouseState currentMouseState = Mouse.GetState();
 
-            Map_map.CheckMouse(currentMouseState);
-            Map_map.mouseEvent();
 
             base.Update(gameTime);
         }
@@ -70,7 +71,7 @@ namespace UlearnGameMG
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, screenXform);
-            Map_map.Draw(_spriteBatch, mark, font);
+            draw.DrawMap(Map_map);
             _spriteBatch.End();
 
             base.Draw(gameTime);
