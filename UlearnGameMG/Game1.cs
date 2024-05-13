@@ -19,6 +19,8 @@ namespace UlearnGameMG
         private Rectangle cellRect = new Rectangle(0,0, 126, 72);
         private MouseState lastMouseState;
         private readonly Matrix screenXform;
+        private bool click = false;
+        private GameLogic Game;
         
 
         public Game1()
@@ -37,8 +39,8 @@ namespace UlearnGameMG
         { 
             base.Initialize();
             Map_map = new Map(block);
-            Map_map.CharacterAdd(new Сharacter("aboba", new Vector2(1, 1), pers, 3));
-            
+            Map_map.CharacterAdd(new Character("aboba", new Point(1, 1), pers, 3));
+            Map_map.CharacterAdd(new Character("aboba2", new Point(1, 2), pers, 3));
         }
 
         protected override void LoadContent()
@@ -52,12 +54,13 @@ namespace UlearnGameMG
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !click) { Map_map.ChangeMode(); click = true; }
+            if (Keyboard.GetState().IsKeyUp(Keys.Escape)) { click = false; }
 
             MouseState currentMouseState = Mouse.GetState();
 
-            Map_map.CheckMouseCell(currentMouseState);
+            Map_map.CheckMouse(currentMouseState);
+            Map_map.mouseEvent();
 
             base.Update(gameTime);
         }

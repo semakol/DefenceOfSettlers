@@ -3,20 +3,37 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Collections;
+using System.Reflection;
+using System;
 using System.Linq;
+using System.Diagnostics;
 
 namespace UlearnGameMG
 {
     public class Map
     {
-        public Vector2 size = new Vector2(126, 75); 
+        //public Vector2 size = new Vector2(126, 75); 
         private MapCell[,] mapCells = new MapCell[8, 8];
-        private GameObject[,] gameObjects= new GameObject[8, 8];
-        private Vector2 rift = new Vector2(140, 300);
-        private Vector2 mousePos = new Vector2(0,0);
-        private (int, int) nowCell = (0, 0);
-        private Point nowChoiseCell = new Point(-1,-1);
-        private List<Point> canMove = new List<Point>();
+        public List<GameObject> gameObjects = new();
+        //private Vector2 rift = new Vector2(140, 300);
+        //private Vector2 mousePos = new Vector2(-1, -1);
+        //private Point mousePoint = new Point(-1, -1);
+        //private bool mouseClick = false;
+        //private Point nowCell = new Point(-1, -1);
+        //private Point nowChoiseCell = new Point(-1,-1);
+        //public List<Point> canMove = new List<Point>();
+        //public List<Point> canSpell = new List<Point>();
+        public Mode mode = Mode.Choise; 
+
+        public enum Mode
+        {
+            Choise,
+            Move,
+            Attack
+        }
+
+        //public Character choiseCharacter() => !OutOfBounds(nowChoiseCell) ? (Character)gameObjects[nowChoiseCell.X, nowChoiseCell.Y] : null;
 
         public Map(Texture2D texture)
         {
@@ -27,109 +44,214 @@ namespace UlearnGameMG
                 }
         }
 
-        public void Draw(SpriteBatch _spriteBatch, Texture2D mark, SpriteFont font) 
-        {
-            int t = 0;
-            for (int j = 0; j < mapCells.GetLength(0); j++)
-                for (int i = mapCells.GetLength(1) - 1; i >= 0; i--)
-                {
-                    
-                    var texture = mapCells[j, i].texture;
-                    _spriteBatch.Draw(
-                        texture,
-                        //cordToIso(new Vector2(i * size.X/2, j * size.Y/1.2f)) + rift,
-                        new Vector2(
-                            (i * size.X / 2) + (j * size.X / 2) + rift.X, 
-                            (j * size.Y / 2) - (i * size.Y / 2) + rift.Y),
-                        ((i,j) == nowCell || nowChoiseCell == new Point(i,j) ? new Color(255, 191, 0) :
-                         (canMove.Contains(new Point(i, j)) ? new Color(255, 191, 0) : new Color(255, 255, 255)))
-                        );
-                    //_spriteBatch.DrawString(font, j.ToString() + i.ToString(), new Vector2(
-                    //        (i * size.X / 2) + (j * size.X / 2) + rift.X,
-                    //        (j * size.Y / 2 * 0.489f) - (i * size.Y / 2 * 0.489f) + rift.Y), new Color(255, 255, 255));
-                    t++;
-                }
-            for (int j = 0; j < mapCells.GetLength(0); j++)
-                for (int i = mapCells.GetLength(1) - 1; i >= 0; i--)
-                {
-                    if (gameObjects[i, j] != null)
-                    {
-                        _spriteBatch.Draw(
-                        gameObjects[i, j].texture,
-                        new Vector2(
-                            (i * size.X / 2) + (j * size.X / 2) + rift.X,
-                            (j * size.Y / 2) - (i * size.Y / 2) + rift.Y - 110),
-                        ((i, j) == nowCell ? new Color(255, 191, 0) : new Color(255, 255, 255))
-                        );
-                    }
-                }
-            for (int x = 0; x < 9; x++)
-                for (int y = 0; y < 9; y++)
-                {
-                //    _spriteBatch.Draw(mark, new Vector2(x * 73.316f, y * 73.316f), new Color(255, 255, 255));
-                }
-            _spriteBatch.Draw(mark, mousePos, new Color(255, 255, 255));
-        }
+        //public void Draw(SpriteBatch _spriteBatch, Texture2D mark, SpriteFont font) 
+        //{
+        //    int t = 0;
+        //    for (int j = 0; j < mapCells.GetLength(0); j++)
+        //        for (int i = mapCells.GetLength(1) - 1; i >= 0; i--)
+        //        {
+        //            var texture = mapCells[j, i].texture;
+        //            _spriteBatch.Draw(
+        //                texture,
+        //                //cordToIso(new Vector2(i * size.X/2, j * size.Y/1.2f)) + rift,
+        //                new Vector2(
+        //                    (i * size.X / 2) + (j * size.X / 2) + rift.X, 
+        //                    (j * size.Y / 2) - (i * size.Y / 2) + rift.Y),
+        //                (new Point(i,j) == nowCell || nowChoiseCell == new Point(i,j) ? new Color(255, 191, 0) :
+        //                 (canSpell.Contains(new Point(i, j)) ? new Color(255, 191, 0) : 
+        //                 canMove.Contains(new Point(i, j)) ? new Color(0, 200, 0) : new Color(255, 255, 255)))
+        //                );
+        //            //_spriteBatch.DrawString(font, j.ToString() + i.ToString(), new Vector2(
+        //            //        (i * size.X / 2) + (j * size.X / 2) + rift.X,
+        //            //        (j * size.Y / 2 * 0.489f) - (i * size.Y / 2 * 0.489f) + rift.Y), new Color(255, 255, 255));
+        //            t++;
+        //        }
+        //    for (int j = 0; j < mapCells.GetLength(0); j++)
+        //        for (int i = mapCells.GetLength(1) - 1; i >= 0; i--)
+        //        {
+        //            if (gameObjects[i, j] != null)
+        //            {
+        //                _spriteBatch.Draw(
+        //                gameObjects[i, j].texture,
+        //                new Vector2(
+        //                    (i * size.X / 2) + (j * size.X / 2) + rift.X,
+        //                    (j * size.Y / 2) - (i * size.Y / 2) + rift.Y - 110),
+        //                (new Point(i, j) == nowCell ? new Color(255, 191, 0) : new Color(255, 255, 255))
+        //                );
+        //            }
+        //        }
+        //    for (int x = 0; x < 9; x++)
+        //        for (int y = 0; y < 9; y++)
+        //        {
+        //        //    _spriteBatch.Draw(mark, new Vector2(x * 73.316f, y * 73.316f), new Color(255, 255, 255));
+        //        }
+        //    // _spriteBatch.Draw(mark, mousePos, new Color(255, 255, 255));
+        //    _spriteBatch.DrawString(font, mode.ToString(), new Vector2(10,10), new Color(255, 255, 255));
+        //}
 
-        public void CheckMouseCell(MouseState mouse)
+        
+
+        //public void CheckMouse(MouseState mouse, out Point mousePoint)
+        //{
+        //    mousePos = IsoToCord(mouse.Position.ToVector2() - rift - new Vector2(0, size.Y / 2));
+        //    mousePoint = new Point((int)(mousePos.X / 73.316f), (int)(mousePos.Y / 73.316f));
+        //    //mouseClick = mouse.LeftButton.HasFlag(ButtonState.Pressed);
+        //    //var cordPos = IsoToCord(mouse.Position.ToVector2() - rift - new Vector2(0,size.Y / 2));
+        //    //var cordPos2 = new Point((int)(cordPos.X / 73.316f), (int)(cordPos.Y / 73.316f));
+        //    //canSpell.Clear();
+        //    //if (OutOfBounds(cordPos2))
+        //    //{
+        //    //    nowCell = new Point(-1, -1);
+        //    //    if (mouse.LeftButton.HasFlag(ButtonState.Pressed))
+        //    //    { 
+        //    //        nowChoiseCell = new Point(-1, -1);
+        //    //        canMove.Clear();
+        //    //    }    
+        //    //}
+        //    //else
+        //    //{
+        //    //    if (choiseCharacter() != null)
+        //    //    CanMoveDetect(nowChoiseCell, choiseCharacter().move);
+        //    //    nowCell = cordPos2;
+        //    //    if (mouse.LeftButton.HasFlag(ButtonState.Pressed))
+        //    //    {
+        //    //        if (!spellCasting && gameObjects[nowCell.X, nowCell.Y] != null && gameObjects[nowCell.X, nowCell.Y].canUse) 
+        //    //        {
+        //    //            var gameObject = (Character)gameObjects[nowCell.X, nowCell.Y];
+        //    //            nowChoiseCell = new Point(nowCell.X, nowCell.Y);
+        //    //            CanMoveDetect(nowChoiseCell, gameObject.move);
+        //    //        }
+        //    //        else if ((!spellCasting && gameObjects[nowCell.X, nowCell.Y] is null) && (canMove.Contains(cordPos2)))
+        //    //        {
+        //    //            ObjectMove(choiseCharacter(), cordPos2);
+        //    //            nowChoiseCell = new Point(-1, -1);
+        //    //            canMove.Clear();
+        //    //        }
+        //    //        else if (!spellCasting)
+        //    //        {
+
+        //    //        }
+        //    //    }
+        //    //}
+        //    //if (spellCasting)
+        //    //{
+        //    //    canSpell.Clear();
+        //    //    canMove.Clear();
+        //    //    if (!OutOfBounds(nowChoiseCell))
+        //    //    {
+        //    //        var spell = choiseCharacter().FirstSpell;
+
+        //    //        if (spell.atacksPoints.Select(x => x + nowChoiseCell).Contains(cordPos2))
+        //    //            spell.splashPoints.ForEach(x => canSpell.Add(x.Item1 + cordPos2));
+        //    //        else spell.atacksPoints.ForEach(x => canSpell.Add(x + nowChoiseCell));
+        //    //    }
+        //    //    mousePos = cordPos;
+        //    //}
+
+        //}
+
+        //public void mouseEvent()
+        //{
+        //    if (mouseClick)
+        //    {
+        //        var choise = choiseCharacter();
+        //        var point = mousePoint;
+        //        if (mode == Mode.Choise)
+        //        {
+        //            if (OutOfBounds(mousePoint)) return;
+        //            nowChoiseCell = point;
+        //            mode = Mode.Move;
+        //            CanMoveDetect(nowChoiseCell, choiseCharacter().move);
+        //        }
+        //        else if (mode == Mode.Move) 
+        //        {
+        //            if (canMove.Contains(point)) ObjectMove(choise, point);
+        //            nowChoiseCell = new Point(-1,-1);
+        //        }
+        //        else if (mode == Mode.Attack)
+        //        {
+
+        //        }
+        //    }
+        //    if (OutOfBounds(mousePoint)) return;
+        //    nowCell = mousePoint;
+        //}
+        
+        //public void CharacterAdd(Character character)
+        //{
+        //    gameObjects[(int)character.position.X, (int)character.position.Y] = character;
+        //}
+
+        //public void SpellActivate(Spell spell)
+        //{
+        //    canMove.Clear();
+            
+        //}
+
+        //private void ObjectMove(GameObject gameObject, Point point)
+        //{
+        //    gameObjects[gameObject.position.X, gameObject.position.Y] = null;
+        //    gameObjects[point.X, point.Y] = gameObject;
+        //    gameObject.position = point;
+        //}
+
+        //private Vector2 cordToIso(Vector2 position)
+        //{
+        //    float sin = 0.5105f;
+        //    float cos = 0.85985f;
+        //    return new Vector2(
+        //        (position.X * cos + position.Y * cos),
+        //        (-position.X * sin + position.Y * sin)
+        //        );
+        //}
+
+        //private Vector2 IsoToCord(Vector2 position)
+        //{
+        //    float a = 0.5814967f;
+        //    float b = 0.9794319f;
+        //    return new Vector2(
+        //        (position.X * a - position.Y * b),
+        //        (position.X * a + position.Y * b)
+        //        );
+        //}
+
+        public List<Point> CanMove(Point start, int move)
         {
-            var cordPos = IsoToCord(mouse.Position.ToVector2() - rift - new Vector2(0,size.Y / 2));
-            var cordPos2 = new Vector2(cordPos.X / 73.316f, cordPos.Y / 73.316f);
-            if (cordPos2.X < 0 || cordPos2.Y < 0 || cordPos2.X > 8 || cordPos2.Y > 8)
+            var canMove = new List<Point>();
+            var queue = new Queue<(Point, int)>();
+            var visited = new HashSet<(Point, int)>();
+            bool first = true;
+            queue.Enqueue((start, move+1));
+            while (queue.Count != 0)
             {
-                nowCell = (-1, -1);
-                if (mouse.LeftButton.HasFlag(ButtonState.Pressed)) nowChoiseCell = new Point(-1, -1);
+                var deQueue = queue.Dequeue();
+                var point = deQueue.Item1;
+                if (OutOfBounds(point)) continue;
+                if ((!gameObjects.Any(x => x.position == point) && !first) || deQueue.Item2 == 0 || visited.Contains(deQueue)) continue;
+                
+                if (first) first = false;
+                else canMove.Add(point);
+
+                visited.Add(deQueue);
+
+                for (var dy = -1; dy <= 1; dy++)
+                    for (var dx = -1; dx <= 1; dx++)
+                        if (dx != 0 && dy != 0) continue;
+                        else queue.Enqueue((new Point(point.X + dx, point.Y + dy), deQueue.Item2-1));
+
             }
-            else
-            {
-                nowCell = ((int)(cordPos.X / 73.316f), (int)(cordPos.Y / 73.316f));
-                if (mouse.LeftButton.HasFlag(ButtonState.Pressed))
-                {
-                    if (gameObjects[nowCell.Item1, nowCell.Item2] != null && gameObjects[nowCell.Item1, nowCell.Item2].canUse) 
-                    { 
-                        nowChoiseCell = new Point(nowCell.Item1, nowCell.Item2);
-                        CanMoveDetect(nowChoiseCell, 5);
-                    }
-                }
-            }
-            mousePos = cordPos;
+            return canMove;
         }
 
-        public void CharacterAdd(Сharacter character)
+        public void GameObjectAdd(GameObject go)
         {
-            gameObjects[(int)character.position.X, (int)character.position.Y] = character;
+            if (go == null && gameObjects.Any(x => x.position != go.position)) Debug.Write("Cann't add object");
+            else gameObjects.Add(go);
         }
 
-        private Vector2 cordToIso(Vector2 position)
+        public bool OutOfBounds(Point point)
         {
-            float sin = 0.5105f;
-            float cos = 0.85985f;
-            return new Vector2(
-                (position.X * cos + position.Y * cos),
-                (-position.X * sin + position.Y * sin)
-                );
-        }
-
-        private Vector2 IsoToCord(Vector2 position)
-        {
-            float a = 0.5814967f;
-            float b = 0.9794319f;
-            return new Vector2(
-                (position.X * a - position.Y * b),
-                (position.X * a + position.Y * b)
-                );
-        }
-
-        public void CanMoveDetect(Point start, int move)
-        {
-            for (int x = 0; x < move; x++)
-                for (int y = 0; y < move; y++)
-                {
-                    if (gameObjects[x+start.X, y+start.Y] is null)
-                    {
-                        canMove.Add(new Point(x, y));
-                    }
-                }
+            return (point.X < 0 || point.Y < 0 || point.X > 7 || point.Y > 7 );
         }
     }
 
