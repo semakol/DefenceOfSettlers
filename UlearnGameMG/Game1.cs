@@ -61,7 +61,7 @@ namespace UlearnGameMG
         {
             if (Keyboard.GetState().IsKeyUp(Keys.Escape)) { click = false; }
 
-            MouseState currentMouseState = Mouse.GetState();
+            InputManager.Update();
 
 
             base.Update(gameTime);
