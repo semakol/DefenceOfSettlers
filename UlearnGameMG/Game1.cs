@@ -44,7 +44,8 @@ namespace UlearnGameMG
             Game.AddCharacter(new Character("aboba", new Point(1, 1), pers, 3));
             Game.AddCharacter(new Character("aboba2", new Point(1, 2), pers, 3));
             Game.MapLoad(Map_map);
-            draw = new(_spriteBatch);
+            draw = new(_spriteBatch, Game);
+            draw.LoadMap(Map_map);
         }
 
         protected override void LoadContent()
@@ -71,7 +72,8 @@ namespace UlearnGameMG
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, screenXform);
-            draw.DrawMap(Map_map);
+            draw.DrawMap();
+            draw.DrawObjects();
             _spriteBatch.End();
 
             base.Draw(gameTime);
