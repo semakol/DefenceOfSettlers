@@ -24,14 +24,6 @@ namespace UlearnGameMG
         //public List<Point> canSpell = new List<Point>();
         public MapCell[,] mapCells = new MapCell[8, 8];
         public List<GameObject> gameObjects = new();
-        public Mode mode = Mode.Choise; 
-
-        public enum Mode
-        {
-            Choise,
-            Move,
-            Attack
-        }
 
         //public Character choiseCharacter() => !OutOfBounds(nowChoiseCell) ? (Character)gameObjects[nowChoiseCell.X, nowChoiseCell.Y] : null;
 
@@ -227,7 +219,7 @@ namespace UlearnGameMG
                 var deQueue = queue.Dequeue();
                 var point = deQueue.Item1;
                 if (OutOfBounds(point)) continue;
-                if ((!gameObjects.Any(x => x.position == point) && !first) || deQueue.Item2 == 0 || visited.Contains(deQueue)) continue;
+                if ((gameObjects.Any(x => x.position == point) && !first) || deQueue.Item2 == 0 || visited.Contains(deQueue)) continue;
                 
                 if (first) first = false;
                 else canMove.Add(point);
@@ -236,7 +228,7 @@ namespace UlearnGameMG
 
                 for (var dy = -1; dy <= 1; dy++)
                     for (var dx = -1; dx <= 1; dx++)
-                        if (dx != 0 && dy != 0) continue;
+                        if (dx != 0 && dy != 0 || dx == dy) continue;
                         else queue.Enqueue((new Point(point.X + dx, point.Y + dy), deQueue.Item2-1));
 
             }
@@ -249,7 +241,7 @@ namespace UlearnGameMG
             else gameObjects.Add(go);
         }
 
-        public bool OutOfBounds(Point point)
+        static public bool OutOfBounds(Point point)
         {
             return (point.X < 0 || point.Y < 0 || point.X > 7 || point.Y > 7 );
         }

@@ -23,12 +23,39 @@ namespace UlearnGameMG
             characters.Add(character);
         }
 
+        public bool ChoiseCharacter(Point point)
+        {
+            var ch = characters.Where(x => x.position == point).FirstOrDefault();
+            if (ch == default) { return false; }
+            else { 
+                choise = ch;
+                choise.canMove = map.CanMove(choise.position, choise.move);
+                choise.canCast = choise.FirstSpell.atacksPoints.Select(x => x + choise.position).ToList();
+                return true; 
+            }
+        }
+
+        public void ClearChoise() { choise = null; }
+
+
         public bool CharacterMove(Point point)
         {
-            var list = map.CanMove(choise.position, choise.move);
+            var list = choise.canMove;
             if (list.Contains(point))
             {
                 choise.Move(point);
+                choise.canMove = map.CanMove(choise.position, choise.move);
+                choise.canCast = choise.FirstSpell.atacksPoints.Select(x => x + choise.position).ToList();
+                return true;
+            }
+            else return false;
+        }
+
+        public bool CharacterSpell(Point point) 
+        {
+            if (SpellActivate(choise.position, choise.FirstSpell, point)) 
+            {
+                choise = null;
                 return true;
             }
             else return false;

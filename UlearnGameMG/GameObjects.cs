@@ -21,7 +21,9 @@ namespace UlearnGameMG
         public int move = 5;
         public Spell FirstSpell = Spell.Shot();
         public Spell SecondSpell;
-        
+        public List<Point> canMove;
+        public List<Point> canCast;
+
         public Character(string Name, Point pos, Texture2D texture, int hp)
         {
             Hp = hp;

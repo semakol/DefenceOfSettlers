@@ -1,4 +1,5 @@
 ﻿
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,7 +14,7 @@ namespace UlearnGameMG
         private Texture2D block;
         private Texture2D mark;
         private Texture2D pers;
-        private SpriteFont font;
+        static public SpriteFont font;
         Vector2 position = Vector2.Zero;
         private readonly Vector2 Scale;
         private Rectangle cellRect = new Rectangle(0,0, 126, 72);
@@ -22,6 +23,7 @@ namespace UlearnGameMG
         private bool click = false;
         private GameLogic Game;
         private Draw draw;
+        private PlayerInput pInput;
         
 
         public Game1()
@@ -39,12 +41,14 @@ namespace UlearnGameMG
         protected override void Initialize()
         { 
             base.Initialize();
+            Debug.Assert(true);
             Map_map = new Map(block);
             Game = new GameLogic();
             Game.AddCharacter(new Character("aboba", new Point(1, 1), pers, 3));
-            Game.AddCharacter(new Character("aboba2", new Point(1, 2), pers, 3));
+            Game.AddCharacter(new Character("aboba2", new Point(1, 3), pers, 3));
             Game.MapLoad(Map_map);
-            draw = new(_spriteBatch, Game);
+            pInput = new PlayerInput(Game);
+            draw = new(_spriteBatch, Game, pInput);
             draw.LoadMap(Map_map);
         }
 
@@ -62,7 +66,7 @@ namespace UlearnGameMG
             if (Keyboard.GetState().IsKeyUp(Keys.Escape)) { click = false; }
 
             InputManager.Update();
-
+            pInput.ClickHandler();
 
             base.Update(gameTime);
         }
@@ -74,6 +78,7 @@ namespace UlearnGameMG
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, screenXform);
             draw.DrawMap();
             draw.DrawObjects();
+            draw.DrawDebug();
             _spriteBatch.End();
 
             base.Draw(gameTime);

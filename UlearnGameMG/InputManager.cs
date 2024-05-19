@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace UlearnGameMG
         static public MouseState currentMouseState = Mouse.GetState();
         static public MouseState previousMouseState = Mouse.GetState();
         static public Point mousePos = currentMouseState.Position;
+        static public Point mouseCell = Draw.WindToCell(mousePos);
 
         //public InputManager(MouseState mouse, KeyboardState keyboard)
         //{
@@ -30,6 +32,9 @@ namespace UlearnGameMG
             currentMouseState = Mouse.GetState();
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
+            mousePos = currentMouseState.Position;
+            mouseCell = Draw.WindToCell(mousePos);
+            Debug.WriteLine(currentMouseState.ToString());
         }
 
         static public bool IsPressed(Keys key)
