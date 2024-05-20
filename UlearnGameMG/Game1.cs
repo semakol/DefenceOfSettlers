@@ -14,6 +14,7 @@ namespace UlearnGameMG
         private Texture2D block;
         private Texture2D mark;
         private Texture2D pers;
+        private Texture2D button;
         static public SpriteFont font;
         Vector2 position = Vector2.Zero;
         private readonly Vector2 Scale;

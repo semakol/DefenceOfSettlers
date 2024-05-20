@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace UlearnGameMG
@@ -11,6 +12,7 @@ namespace UlearnGameMG
     {
         public GameLogic logic;
         public Mode mode = Mode.Choise;
+        public GameInterface gameInterface;
 
         public PlayerInput(GameLogic logic)
         {
@@ -25,7 +27,8 @@ namespace UlearnGameMG
                 { 
                     if (logic.ChoiseCharacter(InputManager.mouseCell))
                     {
-                        mode = Mode.Move;
+                        if (logic.choise.moveDo) mode = Mode.Attack;
+                        else mode = Mode.Move;
                     }
                 }
                 else if (mode == Mode.Move) 
@@ -50,14 +53,17 @@ namespace UlearnGameMG
             }
             if (InputManager.JustPressed(Keys.D1))
                 if (mode != Mode.Choise)
-                    mode = mode == Mode.Attack ? Mode.Move : Mode.Attack;
+                    mode = (mode == Mode.Attack && !logic.choise.moveDo) ? Mode.Move : Mode.Attack;
             if (InputManager.JustPressed(Keys.Escape))
                 if (mode != Mode.Choise)
                 {
                     mode = Mode.Choise;
                     logic.ClearChoise();
                 }
+            gameInterface.Update();
         }
+
+        
 
     }
 

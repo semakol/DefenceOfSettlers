@@ -23,6 +23,8 @@ namespace UlearnGameMG
         public Spell SecondSpell;
         public List<Point> canMove;
         public List<Point> canCast;
+        public bool moveDo = false;
+        public bool castDo = false;
 
         public Character(string Name, Point pos, Texture2D texture, int hp)
         {

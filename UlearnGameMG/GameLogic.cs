@@ -15,6 +15,7 @@ namespace UlearnGameMG
         public List<Character> characters = new List<Character>();
         public List<Enemies> enemies = new();
         public Character choise = null;
+        public int Turn = 1;
 
         public GameLogic() { }
 
@@ -26,7 +27,7 @@ namespace UlearnGameMG
         public bool ChoiseCharacter(Point point)
         {
             var ch = characters.Where(x => x.position == point).FirstOrDefault();
-            if (ch == default) { return false; }
+            if (ch == default || ch.castDo) { return false; }
             else { 
                 choise = ch;
                 choise.canMove = map.CanMove(choise.position, choise.move);
@@ -41,9 +42,10 @@ namespace UlearnGameMG
         public bool CharacterMove(Point point)
         {
             var list = choise.canMove;
-            if (list.Contains(point))
+            if (list.Contains(point) || !choise.moveDo)
             {
                 choise.Move(point);
+                choise.moveDo = true;
                 choise.canMove = map.CanMove(choise.position, choise.move);
                 choise.canCast = choise.FirstSpell.atacksPoints.Select(x => x + choise.position).ToList();
                 return true;
@@ -55,6 +57,7 @@ namespace UlearnGameMG
         {
             if (SpellActivate(choise.position, choise.FirstSpell, point)) 
             {
+                choise.castDo = true;
                 choise = null;
                 return true;
             }
@@ -70,6 +73,11 @@ namespace UlearnGameMG
                 if (r != default) r.Hp -= atPoint.Item2;
             }
             return true;
+        }
+
+        public void EndTurn()
+        {
+            characters.ForEach(x => { x.castDo = false; x.moveDo = false; });
         }
 
         public void MapLoad(Map map) 
