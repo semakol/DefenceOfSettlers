@@ -14,9 +14,11 @@ namespace UlearnGameMG
         public Mode mode = Mode.Choise;
         public GameInterface gameInterface;
 
-        public PlayerInput(GameLogic logic)
+        public PlayerInput(GameLogic logic, GameInterface gameInterface)
         {
             this.logic = logic;
+            this.gameInterface = gameInterface;
+            gameInterface.buttons["NextTurn"].SetAction(() => logic.EndTurn());
         }
 
         public void ClickHandler()

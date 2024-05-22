@@ -27,7 +27,7 @@ namespace UlearnGameMG
 
         //public Character choiseCharacter() => !OutOfBounds(nowChoiseCell) ? (Character)gameObjects[nowChoiseCell.X, nowChoiseCell.Y] : null;
 
-        public Map(Texture2D texture)
+        public Map(string texture)
         {
             for(int x = 0; x < 8; x++)
                 for(int y = 0; y < 8; y++)
@@ -235,6 +235,16 @@ namespace UlearnGameMG
             return canMove;
         }
 
+        public List<ITexturable> GetTexturables()
+        {
+            var list = new List<ITexturable>();
+            foreach (var cell in mapCells)
+                list.Add(cell);
+            foreach (var obj in gameObjects)
+                list.Add(obj);
+            return list;
+        }
+
         public void GameObjectAdd(GameObject go)
         {
             if (go == null && gameObjects.Any(x => x.position != go.position)) Debug.Write("Cann't add object");
@@ -247,15 +257,23 @@ namespace UlearnGameMG
         }
     }
 
-    public class MapCell
+    public class MapCell : ITexturable
     {
         public Vector2 Location;
-        public Texture2D texture;
+        
         //public GameObject;
 
-        public MapCell(Vector2 location, Texture2D texture) 
+        public MapCell(Vector2 location, string textureName) 
         { 
             this.Location = location; 
+            this.textureName = textureName;
+        }
+
+        public string textureName { get; set; }
+        public Texture2D texture { get; set; }
+
+        public void TextureLoad(Texture2D texture)
+        {
             this.texture = texture;
         }
     }

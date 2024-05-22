@@ -1,5 +1,7 @@
 ﻿
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,10 +13,7 @@ namespace UlearnGameMG
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Map Map_map;
-        private Texture2D block;
-        private Texture2D mark;
-        private Texture2D pers;
-        private Texture2D button;
+        public Dictionary<string, Texture2D> textures = new();
         static public SpriteFont font;
         Vector2 position = Vector2.Zero;
         private readonly Vector2 Scale;
@@ -25,6 +24,8 @@ namespace UlearnGameMG
         private GameLogic Game;
         private Draw draw;
         private PlayerInput pInput;
+        public ContentLoader loader;
+        public GameInterface ingame;
         
 
         public Game1()
@@ -41,25 +42,28 @@ namespace UlearnGameMG
 
         protected override void Initialize()
         { 
-            base.Initialize();
             Debug.Assert(true);
-            Map_map = new Map(block);
+            Map_map = new Map("isometric_pixel_0014");
+            ingame = GameInterface.InGame();
             Game = new GameLogic();
-            Game.AddCharacter(new Character("aboba", new Point(1, 1), pers, 3));
-            Game.AddCharacter(new Character("aboba2", new Point(1, 3), pers, 3));
+            Game.AddCharacter(new Character("aboba", new Point(1, 1), 3, "pers2"));
+            Game.AddCharacter(new Character("aboba2", new Point(1, 3), 3, "pers2"));
             Game.MapLoad(Map_map);
-            pInput = new PlayerInput(Game);
-            draw = new(_spriteBatch, Game, pInput);
+            pInput = new PlayerInput(Game, ingame);
+            draw = new(Game, pInput, ingame);
             draw.LoadMap(Map_map);
+            base.Initialize();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            block = Content.Load<Texture2D>("isometric_pixel_0014");
-            mark = Content.Load<Texture2D>("mark");
+            loader = new(GraphicsDevice);
+            foreach (var item in Map_map.GetTexturables())
+                item.TextureLoad(Content.Load<Texture2D>(item.textureName));
+            foreach (var item in ingame.GetTexturables())
+                item.TextureLoad(Content.Load<Texture2D>(item.textureName));
             font = Content.Load<SpriteFont>("arial");
-            pers = Content.Load<Texture2D>("pers2");
         }
 
         protected override void Update(GameTime gameTime)
@@ -77,12 +81,23 @@ namespace UlearnGameMG
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, screenXform);
-            draw.DrawMap();
-            draw.DrawObjects();
-            draw.DrawDebug();
+            draw.DrawMap(_spriteBatch);
+            draw.DrawObjects(_spriteBatch);
+            draw.DrawInterface(_spriteBatch);
+            draw.DrawDebug(_spriteBatch);
             _spriteBatch.End();
 
             base.Draw(gameTime);
         }
+
+
+    }
+
+    public interface ITexturable
+    {
+        public string textureName { get; set; }
+        public Texture2D texture { get; set; }
+
+        void TextureLoad(Texture2D texture);
     }
 }

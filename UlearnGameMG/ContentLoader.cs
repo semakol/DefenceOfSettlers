@@ -8,12 +8,31 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace UlearnGameMG
 {
-    static public class ContentLoader
+    public class ContentLoader
     {
-        static public Dictionary<string, Texture2D> textures = new();
-        static ContentLoader()
+        private GraphicsDevice graphics;
+        public ContentLoader(GraphicsDevice graphics) 
+        { 
+            this.graphics = graphics;
+        }
+
+        public Texture2D GetTexture(string pFile)
         {
-            
+            Texture2D texture = null;
+
+            if (File.Exists(pFile))
+            {
+                using (var stream = File.OpenRead(pFile))
+                {
+                    texture = Texture2D.FromStream(graphics, stream);
+                }
+            }
+            else
+            {
+                throw new FileNotFoundException("Not find file " + pFile);
+            }
+
+            return texture;
         }
     }
 }

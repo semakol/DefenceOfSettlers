@@ -5,14 +5,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace UlearnGameMG
 {
-    public abstract class GameObject
+    public abstract class GameObject : ITexturable
     {
         public Point position;
-        public Texture2D texture;
         public int Hp;
         public bool canUse = false;
 
+        public string textureName { get; set; }
+        public Texture2D texture { get; set; }
+
         public void Move(Point point) => position = point;
+
+        public void TextureLoad(Texture2D texture)
+        {
+            this.texture = texture;
+        }
     }
 
     public class Character : GameObject
@@ -26,10 +33,10 @@ namespace UlearnGameMG
         public bool moveDo = false;
         public bool castDo = false;
 
-        public Character(string Name, Point pos, Texture2D texture, int hp)
+        public Character(string Name, Point pos, int hp, string textureName)
         {
             Hp = hp;
-            this.texture = texture;
+            this.textureName = textureName;
             position = pos;
             this.Name = Name;
             canUse = true;
@@ -46,7 +53,7 @@ namespace UlearnGameMG
         public Spell FirstSpell = Spell.Shot();
         public Spell SecondSpell;
 
-        public Enemies(string Name, Point pos, Texture2D texture, int hp)
+        public Enemies(string Name, Point pos, int hp)
         {
             Hp = hp;
             this.texture = texture;

@@ -34,7 +34,6 @@ namespace UlearnGameMG
             currentKeyboardState = Keyboard.GetState();
             mousePos = currentMouseState.Position;
             mouseCell = Draw.WindToCell(mousePos);
-            Debug.WriteLine(currentMouseState.ToString());
         }
 
         static public bool IsPressed(Keys key)

@@ -12,17 +12,17 @@ namespace UlearnGameMG
 {
     public class Draw
     {
-        public SpriteBatch spriteBatch;
         static public Vector2 size = new Vector2(126, 75);
         static private Vector2 rift = new Vector2(140, 300);
         private Map map;
         private readonly GameLogic gameLogic;
         private readonly PlayerInput playerInput;
-        public Draw(SpriteBatch spriteBatch, GameLogic gameLogic, PlayerInput playerInput) 
+        private readonly GameInterface gameInterface;
+        public Draw(GameLogic gameLogic, PlayerInput playerInput, GameInterface gameInterface) 
         { 
-            this.spriteBatch = spriteBatch;
             this.gameLogic = gameLogic;
             this.playerInput = playerInput;
+            this.gameInterface = gameInterface;
         }
 
         public void LoadMap(Map map) 
@@ -30,7 +30,7 @@ namespace UlearnGameMG
             this.map = map;
         }
 
-        public void DrawMap() 
+        public void DrawMap(SpriteBatch spriteBatch) 
         {
             var mapCells = map.mapCells;
             for (int j = 0; j < mapCells.GetLength(0); j++)
@@ -60,7 +60,7 @@ namespace UlearnGameMG
                 }
         }
 
-        public void DrawObjects()
+        public void DrawObjects(SpriteBatch spriteBatch)
         {
             foreach (var gameObject in map.gameObjects)
             {
@@ -74,12 +74,18 @@ namespace UlearnGameMG
                 );
             }
         }
+
+        public void DrawInterface(SpriteBatch spriteBatch)
+        {
+            gameInterface.Draw(spriteBatch);
+        }
         
-        public void DrawDebug()
+        public void DrawDebug(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawString(Game1.font, InputManager.mouseCell.ToString(), new Vector2(10, 10), new Color(255, 255, 255));
             spriteBatch.DrawString(Game1.font, InputManager.mousePos.ToString(), new Vector2(10, 30), new Color(255, 255, 255));
             spriteBatch.DrawString(Game1.font, playerInput.mode.ToString(), new Vector2(10, 50), new Color(255, 255, 255));
+            spriteBatch.DrawString(Game1.font, gameLogic.Turn.ToString(), new Vector2(10, 70), new Color(255, 255, 255));
             foreach (var gameObject in map.gameObjects)
             {
                 spriteBatch.DrawString( Game1.font, gameObject.Hp.ToString(),

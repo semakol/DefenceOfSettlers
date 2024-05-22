@@ -77,6 +77,7 @@ namespace UlearnGameMG
 
         public void EndTurn()
         {
+            Turn += 1;
             characters.ForEach(x => { x.castDo = false; x.moveDo = false; });
         }
 
