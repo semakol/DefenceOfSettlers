@@ -68,7 +68,7 @@ namespace UlearnGameMG
                 gameObject.texture,
                 new Vector2(
                     (gameObject.position.X * size.X / 2) + (gameObject.position.Y * size.X / 2) + rift.X,
-                    (gameObject.position.Y * size.Y / 2) - (gameObject.position.X * size.Y / 2) + rift.Y - 110),
+                    (gameObject.position.Y * size.Y / 2) - (gameObject.position.X * size.Y / 2) + rift.Y - 78),
                 gameLogic.choise == gameObject ? new Color(255, 191, 0) :
                 InputManager.mouseCell == gameObject.position ? new Color(255, 191, 0) : new Color(255, 255, 255)
                 );

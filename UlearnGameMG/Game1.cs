@@ -43,11 +43,12 @@ namespace UlearnGameMG
         protected override void Initialize()
         { 
             Debug.Assert(true);
-            Map_map = new Map("isometric_pixel_0014");
+            Map_map = new Map("tiles/isometric_pixel_0014");
+            Map_map.GameObjectAdd(new Barricade(new Point(0, 0), 5, "objects/tile_064"));
             ingame = GameInterface.InGame();
             Game = new GameLogic();
-            Game.AddCharacter(new Character("aboba", new Point(1, 1), 3, "pers2"));
-            Game.AddCharacter(new Character("aboba2", new Point(1, 3), 3, "pers2"));
+            Game.AddCharacter(new Character("aboba", new Point(1, 1), 3, "characters/pers2"));
+            Game.AddCharacter(new Character("aboba2", new Point(1, 3), 3, "characters/pers2"));
             Game.MapLoad(Map_map);
             pInput = new PlayerInput(Game, ingame);
             draw = new(Game, pInput, ingame);

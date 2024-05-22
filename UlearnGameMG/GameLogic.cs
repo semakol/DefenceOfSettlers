@@ -42,7 +42,7 @@ namespace UlearnGameMG
         public bool CharacterMove(Point point)
         {
             var list = choise.canMove;
-            if (list.Contains(point) || !choise.moveDo)
+            if (list.Contains(point) && !choise.moveDo)
             {
                 choise.Move(point);
                 choise.moveDo = true;

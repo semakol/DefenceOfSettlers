@@ -106,7 +106,7 @@ namespace UlearnGameMG
         static public GameInterface InGame()
         {
             var result = new GameInterface();
-            result.AddButton(new Button(new Point(5, 100), "NextTurn", "NextTurn"));
+            result.AddButton(new Button(new Point(5, 100), "interface/NextTurn", "NextTurn"));
             return result;
         }
     }

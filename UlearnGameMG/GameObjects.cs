@@ -66,6 +66,16 @@ namespace UlearnGameMG
 
     }
 
+    public class Barricade : GameObject
+    {
+        public Barricade(Point pos, int hp, string textureName)
+        {
+            position = pos;
+            this.textureName = textureName;
+            Hp = hp;
+        }
+    }
+
     public class Spell
     {
         public string Name;
