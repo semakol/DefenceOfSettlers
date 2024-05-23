@@ -43,12 +43,20 @@ namespace UlearnGameMG
         protected override void Initialize()
         { 
             Debug.Assert(true);
-            Map_map = new Map("tiles/isometric_pixel_0014");
-            Map_map.GameObjectAdd(new Barricade(new Point(0, 0), 5, "objects/tile_064"));
-            ingame = GameInterface.InGame();
+            Map_map = new Map();
+            Map_map.LevelLoad(Level.level1);
+            ingame = GameInterface.InGame;
             Game = new GameLogic();
-            Game.AddCharacter(new Character("aboba", new Point(1, 1), 3, "characters/pers2"));
-            Game.AddCharacter(new Character("aboba2", new Point(1, 3), 3, "characters/pers2"));
+            Game.AddCharacter(new Character("aboba", new Point(2, 3), 3, "characters/pers2"));
+            Game.AddCharacter(new Character("aboba2", new Point(4, 3), 3, "characters/pers2"));
+            Game.AddSupplies(new Supplies(new(2, 2), 1, "objects/tile_001"));
+            Game.AddSupplies(new Supplies(new(3, 4), 1, "objects/tile_001"));
+            Game.AddSupplies(new Supplies(new(5, 2), 1, "objects/tile_001"));
+            Game.AddSupplies(new Supplies(new(5, 5), 1, "objects/tile_001"));
+            Game.AddSupplies(new Supplies(new(5, 5), 1, "objects/tile_001"));
+            Game.AddSupplies(new Supplies(new(1, 1), 1, "objects/tile_001"));
+            Game.AddSupplies(new Supplies(new(7, 4), 1, "objects/tile_001"));
+            Game.AddSupplies(new Supplies(new(1, 6), 1, "objects/tile_001"));
             Game.MapLoad(Map_map);
             pInput = new PlayerInput(Game, ingame);
             draw = new(Game, pInput, ingame);

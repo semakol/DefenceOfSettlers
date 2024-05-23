@@ -14,7 +14,7 @@ namespace UlearnGameMG
     public class Map
     {
         //public Vector2 size = new Vector2(126, 75); 
-        //private Vector2 rift = new Vector2(140, 300);
+        //private Vector2 rift = new Vector2(140, 3..);
         //private Vector2 mousePos = new Vector2(-1, -1);
         //private Point mousePoint = new Point(-1, -1);
         //private bool mouseClick = false;
@@ -25,16 +25,8 @@ namespace UlearnGameMG
         public MapCell[,] mapCells = new MapCell[8, 8];
         public List<GameObject> gameObjects = new();
 
-        //public Character choiseCharacter() => !OutOfBounds(nowChoiseCell) ? (Character)gameObjects[nowChoiseCell.X, nowChoiseCell.Y] : null;
 
-        public Map(string texture)
-        {
-            for(int x = 0; x < 8; x++)
-                for(int y = 0; y < 8; y++)
-                {
-                    mapCells[x, y] = new MapCell(new Vector2(x, y), texture);
-                }
-        }
+        //public Character choiseCharacter() => !OutOfBounds(nowChoiseCell) ? (Character)gameObjects[nowChoiseCell.X, nowChoiseCell.Y] : null;
 
         //public void Draw(SpriteBatch _spriteBatch, Texture2D mark, SpriteFont font) 
         //{
@@ -51,7 +43,7 @@ namespace UlearnGameMG
         //                    (j * size.Y / 2) - (i * size.Y / 2) + rift.Y),
         //                (new Point(i,j) == nowCell || nowChoiseCell == new Point(i,j) ? new Color(255, 191, 0) :
         //                 (canSpell.Contains(new Point(i, j)) ? new Color(255, 191, 0) : 
-        //                 canMove.Contains(new Point(i, j)) ? new Color(0, 200, 0) : new Color(255, 255, 255)))
+        //                 canMove.Contains(new Point(i, j)) ? new Color(0, 2.., 0) : new Color(255, 255, 255)))
         //                );
         //            //_spriteBatch.DrawString(font, j.ToString() + i.ToString(), new Vector2(
         //            //        (i * size.X / 2) + (j * size.X / 2) + rift.X,
@@ -235,6 +227,11 @@ namespace UlearnGameMG
             return canMove;
         }
 
+        public List<Point> RelativePosition(Point point)
+        {
+            return gameObjects.Select(x => x.position - point).ToList() ;
+        }
+
         public List<ITexturable> GetTexturables()
         {
             var list = new List<ITexturable>();
@@ -251,19 +248,44 @@ namespace UlearnGameMG
             else gameObjects.Add(go);
         }
 
+        public void LevelLoad(Level level)
+        {
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    mapCells[i, j] = new MapCell(new(i, j), level.cells[i, j]);
+            foreach(var obj in level.gameObjects)
+                if (obj != null)
+                    this.gameObjects.Add((GameObject)obj);
+        }
+
         static public bool OutOfBounds(Point point)
         {
             return (point.X < 0 || point.Y < 0 || point.X > 7 || point.Y > 7 );
+        }
+
+        public class PointCompaire : IComparer<Point>
+        {
+            public int Compare(Point x, Point y)
+            {
+                if (x.Y == y.Y)
+                {
+                    if (x.X > y.X) return -1;
+                    if (x.X == y.X) return 0;
+                    else return 1;
+                }
+                if (x.Y < y.Y) return -1;
+                else return 1;
+            }
         }
     }
 
     public class MapCell : ITexturable
     {
-        public Vector2 Location;
+        public Point Location;
         
         //public GameObject;
 
-        public MapCell(Vector2 location, string textureName) 
+        public MapCell(Point location, string textureName) 
         { 
             this.Location = location; 
             this.textureName = textureName;

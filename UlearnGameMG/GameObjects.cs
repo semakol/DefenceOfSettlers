@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -26,7 +28,7 @@ namespace UlearnGameMG
     {
         public string Name;
         public int move = 5;
-        public Spell FirstSpell = Spell.Shot();
+        public Spell FirstSpell = Spell.Shot;
         public Spell SecondSpell;
         public List<Point> canMove;
         public List<Point> canCast;
@@ -46,20 +48,20 @@ namespace UlearnGameMG
 
     }
 
-    public class Enemies : GameObject
+    public class Enemy : GameObject
     {
         public string Name;
         public int move = 5;
-        public Spell FirstSpell = Spell.Shot();
+        public Spell FirstSpell = Spell.Shot;
         public Spell SecondSpell;
 
-        public Enemies(string Name, Point pos, int hp)
+        public Enemy(string Name, Point pos, int hp, string textureName)
         {
             Hp = hp;
-            this.texture = texture;
+            this.textureName = textureName;
             position = pos;
             this.Name = Name;
-            canUse = false;
+            canUse = true;
         }
 
         public void Heal() => Hp++;
@@ -76,34 +78,107 @@ namespace UlearnGameMG
         }
     }
 
+    public class Supplies : GameObject
+    {
+        public Supplies(Point pos, int hp, string textureName)
+        {
+            position = pos;
+            this.textureName = textureName;
+            Hp = hp;
+        }
+    }
+
     public class Spell
     {
         public string Name;
-        public List<Point> atacksPoints;
+        public int start;
+        public int end;
         public List<(Point, int)> splashPoints;
+        public bool straight;
 
-        public Spell(string name, List<Point> atPoints, List<(Point, int)> spPoints)
+        public Spell(string name, int start, int end, List<(Point, int)> spPoints, bool straight)
         {
             Name = name;
-            atacksPoints = atPoints;
+            this.start = start;
+            this.end = end;
             splashPoints = spPoints;
+            this.straight = straight;
         }
 
-        public static Spell Shot()
+        public List<Point> GetAttackPoints(List<Point> gameObjects)
         {
-            var atPoints = new List<Point>();
-            for (int i = -8; i<8; i++)
-            {
-                if (i == 0) continue;
-                atPoints.Add(new Point(0, i));
-                atPoints.Add(new Point(i, 0));
-            }
-            var spPoints = new List<(Point, int)>();
-            spPoints.Add((new(0, 1), 1));
-            spPoints.Add((new(1, 0), 1));
-            spPoints.Add((new(0, -1), 1));
-            spPoints.Add((new(-1, 0), 1));
-            return new Spell("Shot", atPoints, spPoints);
+            var result = new List<Point>();
+            var dir = (true, true, true, true);
+            if (!straight)
+                for (int i = start; i < end; i++)
+                {
+                    result.Add(new(0, i));
+                    result.Add(new(0, -i));
+                    result.Add(new(i, 0));
+                    result.Add(new(-i, 0));
+                }
+            else
+                for (int i = start; i < end; i++)
+                {
+                    if (dir.Item1)
+                    {
+                        if (gameObjects.Contains(new(0, i)))
+                        {
+                            dir.Item1 = false;
+                            result.Add(new(0, i));
+                        }
+                        else result.Add(new(0, i));
+                    }
+                    if (dir.Item2)
+                    {
+                        if (gameObjects.Contains(new(0, -i)))
+                        {
+                            dir.Item2 = false;
+                            result.Add(new(0, -i));
+                        }
+                        else result.Add(new(0, -i));
+                    }
+                    if (dir.Item3)
+                    {
+                        if (gameObjects.Contains(new(i, 0)))
+                        {
+                            dir.Item3 = false;
+                            result.Add(new(i, 0));
+                        }
+                        else result.Add(new(i, 0));
+                    }
+                    if (dir.Item4)
+                    {
+                        if (gameObjects.Contains(new(-i, 0)))
+                        {
+                            dir.Item4 = false;
+                            result.Add(new(-i, 0));
+                        }
+                        else result.Add(new(-i, 0));
+                    }
+                }
+            return result;
         }
+
+        public List<(Point, int)> GetSpPoints(Point direct)
+        {
+            if (direct.X > 0)
+                return splashPoints;
+            if (direct.X < 0)
+                return splashPoints.Select(x => (new Point(-x.Item1.X, x.Item1.Y), x.Item2)).ToList();
+            if (direct.Y < 0)
+                return splashPoints.Select(x => (new Point(x.Item1.Y, -x.Item1.X), x.Item2)).ToList();
+            if (direct.Y > 0)
+                return splashPoints.Select(x => (new Point(-x.Item1.Y, x.Item1.X), x.Item2)).ToList();
+            else return splashPoints;
+        }
+
+        static public Spell Shot { get 
+            {
+                var spPoints = new List<(Point, int)>();
+                spPoints.Add((new(0, 0), 1));
+                spPoints.Add((new(1, 0), 2));
+                return new Spell("Shot", 2, 9, spPoints, true);
+            } }
     }
 }

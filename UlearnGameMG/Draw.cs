@@ -14,6 +14,7 @@ namespace UlearnGameMG
     {
         static public Vector2 size = new Vector2(126, 75);
         static private Vector2 rift = new Vector2(140, 300);
+        private IComparer<Point> comparer = new Map.PointCompaire();
         private Map map;
         private readonly GameLogic gameLogic;
         private readonly PlayerInput playerInput;
@@ -22,7 +23,7 @@ namespace UlearnGameMG
         { 
             this.gameLogic = gameLogic;
             this.playerInput = playerInput;
-            this.gameInterface = gameInterface;
+            this.gameInterface = gameInterface; 
         }
 
         public void LoadMap(Map map) 
@@ -32,21 +33,21 @@ namespace UlearnGameMG
 
         public void DrawMap(SpriteBatch spriteBatch) 
         {
+            var attackBool = false;
+            var canMove = new List<Point>();
+            if (playerInput.mode == Mode.Move) canMove = gameLogic.choise.canMove;
+            var canSpell = new List<Point>();
+            if (playerInput.mode == Mode.Attack)
+                if (gameLogic.choise.canCast.Contains(InputManager.mouseCell))
+                {
+                    canSpell = gameLogic.choise.FirstSpell.GetSpPoints(InputManager.mouseCell - gameLogic.choise.position).Select(x => x.Item1 + InputManager.mouseCell).ToList();
+                    attackBool = true;
+                }
+                else canSpell = gameLogic.choise.canCast;
             var mapCells = map.mapCells;
             for (int j = 0; j < mapCells.GetLength(0); j++)
                 for (int i = mapCells.GetLength(1) - 1; i >= 0; i--)
                 {
-                    var attackBool = false;
-                    var canMove = new List<Point>();
-                    if (playerInput.mode == Mode.Move) canMove = gameLogic.choise.canMove;
-                    var canSpell = new List<Point>();
-                    if (playerInput.mode == Mode.Attack)
-                        if (gameLogic.choise.canCast.Contains(InputManager.mouseCell))
-                        {
-                            canSpell = gameLogic.choise.FirstSpell.splashPoints.Select(x => x.Item1 + InputManager.mouseCell).ToList();
-                            attackBool = true;
-                        }
-                        else canSpell = gameLogic.choise.canCast;
                     var texture = mapCells[j, i].texture;
                     spriteBatch.Draw(
                         texture,
@@ -62,7 +63,16 @@ namespace UlearnGameMG
 
         public void DrawObjects(SpriteBatch spriteBatch)
         {
-            foreach (var gameObject in map.gameObjects)
+            var attackBool = false;
+            var canSpell = new List<Point>();
+            if (playerInput.mode == Mode.Attack)
+                if (gameLogic.choise.canCast.Contains(InputManager.mouseCell))
+                {
+                    canSpell = gameLogic.choise.FirstSpell.GetSpPoints(InputManager.mouseCell - gameLogic.choise.position).Select(x => x.Item1 + InputManager.mouseCell).ToList();
+                    attackBool = true;
+                }
+                else canSpell = gameLogic.choise.canCast;
+            foreach (var gameObject in map.gameObjects.OrderBy(x => x.position, comparer))
             {
                 spriteBatch.Draw(
                 gameObject.texture,
@@ -70,7 +80,8 @@ namespace UlearnGameMG
                     (gameObject.position.X * size.X / 2) + (gameObject.position.Y * size.X / 2) + rift.X,
                     (gameObject.position.Y * size.Y / 2) - (gameObject.position.X * size.Y / 2) + rift.Y - 78),
                 gameLogic.choise == gameObject ? new Color(255, 191, 0) :
-                InputManager.mouseCell == gameObject.position ? new Color(255, 191, 0) : new Color(255, 255, 255)
+                InputManager.mouseCell == gameObject.position && !attackBool ? new Color(255, 191, 0) :
+                canSpell.Contains(gameObject.position) ? new Color(255, 191, 0) : new Color(255, 255, 255)
                 );
             }
         }
@@ -86,20 +97,20 @@ namespace UlearnGameMG
             spriteBatch.DrawString(Game1.font, InputManager.mousePos.ToString(), new Vector2(10, 30), new Color(255, 255, 255));
             spriteBatch.DrawString(Game1.font, playerInput.mode.ToString(), new Vector2(10, 50), new Color(255, 255, 255));
             spriteBatch.DrawString(Game1.font, gameLogic.Turn.ToString(), new Vector2(10, 70), new Color(255, 255, 255));
-            foreach (var gameObject in map.gameObjects)
-            {
-                spriteBatch.DrawString( Game1.font, gameObject.Hp.ToString(),
-                new Vector2(
-                    (gameObject.position.X * size.X / 2) + (gameObject.position.Y * size.X / 2) + rift.X,
-                    (gameObject.position.Y * size.Y / 2) - (gameObject.position.X * size.Y / 2) + rift.Y - 120),
-                 new Color(0, 0, 0),
-                 0,
-                 new Vector2(0,0),
-                 2,
-                 0,
-                 0
-                );
-            }
+            //foreach (var gameObject in map.gameObjects)
+            //{
+            //    spriteBatch.DrawString( Game1.font, gameObject.Hp.ToString(),
+            //    new Vector2(
+            //        (gameObject.position.X * size.X / 2) + (gameObject.position.Y * size.X / 2) + rift.X,
+            //        (gameObject.position.Y * size.Y / 2) - (gameObject.position.X * size.Y / 2) + rift.Y - 120),
+            //     new Color(0, 0, 0),
+            //     0,
+            //     new Vector2(0,0),
+            //     2,
+            //     0,
+            //     0
+            //    );
+            //}
         }
 
         static private Vector2 CordToIso(Vector2 position)

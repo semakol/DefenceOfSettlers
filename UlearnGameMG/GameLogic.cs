@@ -12,8 +12,9 @@ namespace UlearnGameMG
     public class GameLogic
     {
         public Map map;
-        public List<Character> characters = new List<Character>();
-        public List<Enemies> enemies = new();
+        public List<Character> characters = new();
+        public List<Enemy> enemies = new();
+        public List<Supplies> suplies = new();
         public Character choise = null;
         public int Turn = 1;
 
@@ -24,6 +25,16 @@ namespace UlearnGameMG
             characters.Add(character);
         }
 
+        public void AddSupplies(Supplies character)
+        {
+            suplies.Add(character);
+        }
+
+        public void AddEnemies(Enemy character)
+        {
+            enemies.Add(character);
+        }
+
         public bool ChoiseCharacter(Point point)
         {
             var ch = characters.Where(x => x.position == point).FirstOrDefault();
@@ -31,7 +42,7 @@ namespace UlearnGameMG
             else { 
                 choise = ch;
                 choise.canMove = map.CanMove(choise.position, choise.move);
-                choise.canCast = choise.FirstSpell.atacksPoints.Select(x => x + choise.position).ToList();
+                choise.canCast = choise.FirstSpell.GetAttackPoints(map.RelativePosition(choise.position)).Select(x => x + choise.position).ToList();
                 return true; 
             }
         }
@@ -47,7 +58,7 @@ namespace UlearnGameMG
                 choise.Move(point);
                 choise.moveDo = true;
                 choise.canMove = map.CanMove(choise.position, choise.move);
-                choise.canCast = choise.FirstSpell.atacksPoints.Select(x => x + choise.position).ToList();
+                choise.canCast = choise.FirstSpell.GetAttackPoints(map.RelativePosition(choise.position)).Select(x => x + choise.position).ToList();
                 return true;
             }
             else return false;
@@ -66,14 +77,28 @@ namespace UlearnGameMG
 
         public bool SpellActivate(Point fPoint, Spell spell, Point tPoint)
         {
-            if (spell.atacksPoints.All(x => x + fPoint != tPoint)) return false;
-            foreach (var atPoint in spell.splashPoints)
+            if (spell.GetAttackPoints(map.RelativePosition(choise.position)).All(x => x + fPoint != tPoint)) return false;
+            foreach (var atPoint in spell.GetSpPoints(InputManager.mouseCell - fPoint))
             {
                 var r = map.gameObjects.Where(x => x.position == tPoint + atPoint.Item1).FirstOrDefault();
                 if (r != default) r.Hp -= atPoint.Item2;
             }
             return true;
         }
+
+        public void DoAiTurn()
+        {
+            foreach (var enemy in enemies)
+            {
+                
+            }
+        }
+
+        //public List<(Point, int)> GetAiMove(Enemy enemy)
+        //{
+        //    var canmove = map.CanMove(enemy.position, enemy.move);
+
+        //}
 
         public void EndTurn()
         {
@@ -85,6 +110,8 @@ namespace UlearnGameMG
         {
             this.map = map;
             characters.ForEach(x => map.GameObjectAdd(x));
+            enemies.ForEach(x => map.GameObjectAdd(x));
+            suplies.ForEach(x => map.GameObjectAdd(x));
         }
     }
 

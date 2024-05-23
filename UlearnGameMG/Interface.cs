@@ -39,13 +39,13 @@ namespace UlearnGameMG
 
         public void AddButton(Button button)
         {
-            buttons.Add(button.Name ,button);
+            buttons.Add(button.Name, button);
             objects.Add(button);
             textureObjs.Add(button);
         }
 
         public List<ITexturable> GetTexturables() { return textureObjs; }
-        
+
         public class Button : IDrawable, ITexturable
         {
             public Point point;
@@ -103,11 +103,11 @@ namespace UlearnGameMG
             }
         }
 
-        static public GameInterface InGame()
+        static public GameInterface InGame { get
         {
             var result = new GameInterface();
             result.AddButton(new Button(new Point(5, 100), "interface/NextTurn", "NextTurn"));
             return result;
-        }
+        } }
     }
 }

@@ -56,6 +56,18 @@
 /processorParam:TextureFormat=Color
 /build:interface/Play@2x.png;interface/NextTurn.png
 
+#begin objects/tile_001.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:objects/tile_001.png
+
 #begin objects/tile_041.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -355,18 +367,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:objects/tile_068.png
-
-#begin pers2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:pers2.png
 
 #begin tiles/isometric_pixel_0000.png
 /importer:TextureImporter
