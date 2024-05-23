@@ -93,7 +93,7 @@ namespace UlearnGameMG
             {
                 if (Turn == 0)
                 {
-                    DoAiAttack(enemy)
+                    DoAiAttack(enemy);
                 }
                 var list = GetAiMove(enemy);
                 list = list.OrderByDescending(x => x.Item2).ToList();
