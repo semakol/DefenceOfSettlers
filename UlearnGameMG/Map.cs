@@ -214,7 +214,7 @@ namespace UlearnGameMG
                 if ((gameObjects.Any(x => x.position == point) && !first) || deQueue.Item2 == 0 || visited.Contains(deQueue)) continue;
                 
                 if (first) first = false;
-                else canMove.Add(point);
+                else if (!canMove.Contains(point)) canMove.Add(point);
 
                 visited.Add(deQueue);
 

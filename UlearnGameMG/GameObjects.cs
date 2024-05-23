@@ -28,7 +28,7 @@ namespace UlearnGameMG
     {
         public string Name;
         public int move = 5;
-        public Spell FirstSpell = Spell.Shot;
+        public Spell FirstSpell = Spell.Sword;
         public Spell SecondSpell;
         public List<Point> canMove;
         public List<Point> canCast;
@@ -52,8 +52,9 @@ namespace UlearnGameMG
     {
         public string Name;
         public int move = 5;
-        public Spell FirstSpell = Spell.Shot;
+        public Spell FirstSpell = Spell.Sword;
         public Spell SecondSpell;
+        public List<Point> NextAttack;
 
         public Enemy(string Name, Point pos, int hp, string textureName)
         {
@@ -179,6 +180,13 @@ namespace UlearnGameMG
                 spPoints.Add((new(0, 0), 1));
                 spPoints.Add((new(1, 0), 2));
                 return new Spell("Shot", 2, 9, spPoints, true);
+            } }
+
+        static public Spell Sword { get
+            {
+                var spPoints = new List<(Point, int)>();
+                spPoints.Add((new(0, 0), 1));
+                return new Spell("Sword", 1, 2, spPoints, false);
             } }
     }
 }

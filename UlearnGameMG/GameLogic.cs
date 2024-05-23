@@ -17,6 +17,7 @@ namespace UlearnGameMG
         public List<Supplies> suplies = new();
         public Character choise = null;
         public int Turn = 1;
+        private Random random = new();
 
         public GameLogic() { }
 
@@ -90,20 +91,45 @@ namespace UlearnGameMG
         {
             foreach (var enemy in enemies)
             {
-                
+                if (Turn == 0)
+                {
+                    DoAiAttack(enemy)
+                }
+                var list = GetAiMove(enemy);
+                list = list.OrderByDescending(x => x.Item2).ToList();
+                enemy.Move(list[0].Item1);
             }
         }
 
-        //public List<(Point, int)> GetAiMove(Enemy enemy)
-        //{
-        //    var canmove = map.CanMove(enemy.position, enemy.move);
+        public void DoAiAttack(Enemy enemy)
+        {
+            
+        }
 
-        //}
+
+        public List<(Point, int)> GetAiMove(Enemy enemy)
+        {
+            var result = new List<(Point, int)>();
+            var canmove = map.CanMove(enemy.position, enemy.move);
+            int cost;
+            foreach (var point in canmove)
+            {
+                cost = 0;
+                foreach (var atPoint in enemy.FirstSpell.GetAttackPoints(map.RelativePosition(enemy.position)))
+                {
+                    if (suplies.Select(x => x.position).Contains(atPoint + point)) cost += 2;
+                    if (characters.Select(x => x.position).Contains(atPoint + point)) cost -= 1;
+                }
+                result.Add((point, cost));
+            }
+            return result;
+        }
 
         public void EndTurn()
         {
             Turn += 1;
             characters.ForEach(x => { x.castDo = false; x.moveDo = false; });
+            DoAiTurn();
         }
 
         public void MapLoad(Map map) 

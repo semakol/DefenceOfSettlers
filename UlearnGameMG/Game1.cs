@@ -49,6 +49,7 @@ namespace UlearnGameMG
             Game = new GameLogic();
             Game.AddCharacter(new Character("aboba", new Point(2, 3), 3, "characters/pers2"));
             Game.AddCharacter(new Character("aboba2", new Point(4, 3), 3, "characters/pers2"));
+            Game.AddEnemies(new Enemy("aboba3", new Point(5, 7), 3, "objects/tile_054"));
             Game.AddSupplies(new Supplies(new(2, 2), 1, "objects/tile_001"));
             Game.AddSupplies(new Supplies(new(3, 4), 1, "objects/tile_001"));
             Game.AddSupplies(new Supplies(new(5, 2), 1, "objects/tile_001"));

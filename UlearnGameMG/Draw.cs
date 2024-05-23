@@ -111,6 +111,24 @@ namespace UlearnGameMG
             //     0
             //    );
             //}
+            foreach (var enemy in gameLogic.enemies)
+            {
+                var list = gameLogic.GetAiMove(enemy);
+                foreach(var p in list)
+                {
+                    spriteBatch.DrawString(Game1.font, p.Item2.ToString(),
+                    new Vector2(
+                        (p.Item1.X * size.X / 2) + (p.Item1.Y * size.X / 2) + rift.X,
+                        (p.Item1.Y * size.Y / 2) - (p.Item1.X * size.Y / 2) + rift.Y - 120),
+                     new Color(0, 0, 0),
+                     0,
+                     new Vector2(0, 0),
+                     2,
+                     0,
+                     0
+                    );
+                }
+            }
         }
 
         static private Vector2 CordToIso(Vector2 position)
