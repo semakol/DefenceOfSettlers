@@ -33,6 +33,26 @@ namespace UlearnGameMG
 
         public void DrawMap(SpriteBatch spriteBatch) 
         {
+            var mapCells = map.mapCells;
+            for (int j = 0; j < mapCells.GetLength(0); j++)
+                for (int i = mapCells.GetLength(1) - 1; i >= 0; i--)
+                {
+                    var texture = mapCells[j, i].texture;
+                    spriteBatch.Draw(
+                        texture,
+                        new Vector2(
+                            (i * size.X / 2) + (j * size.X / 2) + rift.X,
+                            (j * size.Y / 2) - (i * size.Y / 2) + rift.Y),
+                        new Color(255, 255, 255)
+                        //(InputManager.mouseCell == new Point(i,j) && !attackBool) ? new Color(255, 191, 0) :
+                        //canSpell.Contains(new Point(i, j)) ? new Color(255, 191, 0) :
+                        //canMove.Contains(new Point(i,j)) ? new Color(0, 200, 0) : new Color(255,255,255)
+                        );
+                }
+        }
+
+        public void DrawTile(SpriteBatch spriteBatch)
+        {
             var attackBool = false;
             var canMove = new List<Point>();
             if (playerInput.mode == Mode.Move) canMove = gameLogic.choise.canMove;
@@ -44,19 +64,26 @@ namespace UlearnGameMG
                     attackBool = true;
                 }
                 else canSpell = gameLogic.choise.canCast;
+            var enemySpell = new List<Point>();
+            foreach (var enemy in gameLogic.enemies)
+            {
+                enemySpell.AddRange(enemy.NextAttack.Select(x => x.Item1));
+            }
             var mapCells = map.mapCells;
-            for (int j = 0; j < mapCells.GetLength(0); j++)
-                for (int i = mapCells.GetLength(1) - 1; i >= 0; i--)
-                {
-                    var texture = mapCells[j, i].texture;
+            var list = new List<Point>(canSpell);
+            list.AddRange(canMove);
+            list.AddRange(enemySpell);
+            list.Add(InputManager.mouseCell);
+            foreach (var tile in list.OrderBy(x => x, comparer).Where(x => !OutOfBounds(x))) { 
                     spriteBatch.Draw(
-                        texture,
+                        Game1.tile_mark,
                         new Vector2(
-                            (i * size.X / 2) + (j * size.X / 2) + rift.X,
-                            (j * size.Y / 2) - (i * size.Y / 2) + rift.Y),
-                        (InputManager.mouseCell == new Point(i,j) && !attackBool) ? new Color(255, 191, 0) :
-                        canSpell.Contains(new Point(i, j)) ? new Color(255, 191, 0) :
-                        canMove.Contains(new Point(i,j)) ? new Color(0, 200, 0) : new Color(255,255,255)
+                            (tile.X * size.X / 2) + (tile.Y * size.X / 2) + rift.X,
+                            (tile.Y * size.Y / 2) - (tile.X * size.Y / 2) + rift.Y),
+                        (InputManager.mouseCell == tile && !attackBool) ? new Color(255, 191, 0) :
+                        canSpell.Contains(tile) ? new Color(200, 0, 0) :
+                        enemySpell.Contains(tile) ? new Color(255, 10, 10) :
+                        canMove.Contains(tile) ? new Color(100, 250, 140) : new Color(255, 255, 255)
                         );
                 }
         }
@@ -89,6 +116,41 @@ namespace UlearnGameMG
         public void DrawInterface(SpriteBatch spriteBatch)
         {
             gameInterface.Draw(spriteBatch);
+            foreach (var enemy in gameLogic.enemies)
+            {
+                foreach(var point in enemy.NextAttack)
+                {
+                    spriteBatch.DrawString(Game1.font, point.Item2.ToString(),
+                        new Vector2(
+                        (point.Item1.X * size.X / 2) + (point.Item1.Y * size.X / 2) + rift.X + 56,
+                        (point.Item1.Y * size.Y / 2) - (point.Item1.X * size.Y / 2) + rift.Y - 78),
+                        new Color(255, 10, 10),
+                        0,
+                        new Vector2(0, 0),
+                        2,
+                        0,
+                        0);
+                }
+            }
+            var canSpell = new List<(Point, int)>();
+            if (playerInput.mode == Mode.Attack)
+                if (gameLogic.choise.canCast.Contains(InputManager.mouseCell))
+                {
+                    canSpell = gameLogic.choise.FirstSpell.GetSpPoints(InputManager.mouseCell - gameLogic.choise.position).Select(x => (x.Item1 + InputManager.mouseCell, x.Item2)).ToList();
+                }
+            foreach (var point in canSpell)
+            {
+                spriteBatch.DrawString(Game1.font, point.Item2.ToString(),
+                        new Vector2(
+                        (point.Item1.X * size.X / 2) + (point.Item1.Y * size.X / 2) + rift.X + 56,
+                        (point.Item1.Y * size.Y / 2) - (point.Item1.X * size.Y / 2) + rift.Y - 78),
+                        new Color(255, 10, 10),
+                        0,
+                        new Vector2(0, 0),
+                        2,
+                        0,
+                        0);
+            }
         }
         
         public void DrawDebug(SpriteBatch spriteBatch)
@@ -111,24 +173,25 @@ namespace UlearnGameMG
             //     0
             //    );
             //}
-            foreach (var enemy in gameLogic.enemies)
-            {
-                var list = gameLogic.GetAiMove(enemy);
-                foreach(var p in list)
-                {
-                    spriteBatch.DrawString(Game1.font, p.Item2.ToString(),
-                    new Vector2(
-                        (p.Item1.X * size.X / 2) + (p.Item1.Y * size.X / 2) + rift.X,
-                        (p.Item1.Y * size.Y / 2) - (p.Item1.X * size.Y / 2) + rift.Y - 120),
-                     new Color(0, 0, 0),
-                     0,
-                     new Vector2(0, 0),
-                     2,
-                     0,
-                     0
-                    );
-                }
-            }
+
+            //foreach (var enemy in gameLogic.enemies)
+            //{
+            //    var list = gameLogic.GetAiMove(enemy);
+            //    foreach (var p in list)
+            //    {
+            //        spriteBatch.DrawString(Game1.font, p.Item2.ToString(),
+            //        new Vector2(
+            //            (p.Item1.X * size.X / 2) + (p.Item1.Y * size.X / 2) + rift.X,
+            //            (p.Item1.Y * size.Y / 2) - (p.Item1.X * size.Y / 2) + rift.Y - 120),
+            //         new Color(0, 0, 0),
+            //         0,
+            //         new Vector2(0, 0),
+            //         2,
+            //         0,
+            //         0
+            //        );
+            //    }
+            //}
         }
 
         static private Vector2 CordToIso(Vector2 position)

@@ -15,8 +15,9 @@ namespace UlearnGameMG
         private Map Map_map;
         public Dictionary<string, Texture2D> textures = new();
         static public SpriteFont font;
+        static public Texture2D tile_mark;
         Vector2 position = Vector2.Zero;
-        private readonly Vector2 Scale;
+        public readonly Vector2 Scale;
         private Rectangle cellRect = new Rectangle(0,0, 126, 72);
         private MouseState lastMouseState;
         private readonly Matrix screenXform;
@@ -37,7 +38,7 @@ namespace UlearnGameMG
             _graphics.PreferredBackBufferHeight = 720;
             var screenScale = _graphics.PreferredBackBufferHeight / 720.0f;
             screenXform = Matrix.CreateScale(screenScale, screenScale, 1.0f);
-            Scale = new Vector2(_graphics.PreferredBackBufferWidth / 1280, _graphics.PreferredBackBufferHeight / 720);
+            Scale = new Vector2(screenScale, screenScale);
         }
 
         protected override void Initialize()
@@ -74,13 +75,14 @@ namespace UlearnGameMG
             foreach (var item in ingame.GetTexturables())
                 item.TextureLoad(Content.Load<Texture2D>(item.textureName));
             font = Content.Load<SpriteFont>("arial");
+            tile_mark = Content.Load<Texture2D>("interface/Mark_tile");
         }
 
         protected override void Update(GameTime gameTime)
         {
             if (Keyboard.GetState().IsKeyUp(Keys.Escape)) { click = false; }
 
-            InputManager.Update();
+            InputManager.Update(Scale.Y);
             pInput.ClickHandler();
 
             base.Update(gameTime);
@@ -92,6 +94,7 @@ namespace UlearnGameMG
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, screenXform);
             draw.DrawMap(_spriteBatch);
+            draw.DrawTile(_spriteBatch);
             draw.DrawObjects(_spriteBatch);
             draw.DrawInterface(_spriteBatch);
             draw.DrawDebug(_spriteBatch);

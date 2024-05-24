@@ -12,6 +12,7 @@ namespace UlearnGameMG
         public Point position;
         public int Hp;
         public bool canUse = false;
+        
 
         public string textureName { get; set; }
         public Texture2D texture { get; set; }
@@ -28,7 +29,7 @@ namespace UlearnGameMG
     {
         public string Name;
         public int move = 5;
-        public Spell FirstSpell = Spell.Sword;
+        public Spell FirstSpell = Spell.Shot;
         public Spell SecondSpell;
         public List<Point> canMove;
         public List<Point> canCast;
@@ -54,7 +55,7 @@ namespace UlearnGameMG
         public int move = 5;
         public Spell FirstSpell = Spell.Sword;
         public Spell SecondSpell;
-        public List<Point> NextAttack;
+        public List<(Point, int)> NextAttack = new();
 
         public Enemy(string Name, Point pos, int hp, string textureName)
         {
@@ -177,8 +178,7 @@ namespace UlearnGameMG
         static public Spell Shot { get 
             {
                 var spPoints = new List<(Point, int)>();
-                spPoints.Add((new(0, 0), 1));
-                spPoints.Add((new(1, 0), 2));
+                spPoints.Add((new(0, 0), 2));
                 return new Spell("Shot", 2, 9, spPoints, true);
             } }
 

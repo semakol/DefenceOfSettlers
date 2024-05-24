@@ -26,13 +26,13 @@ namespace UlearnGameMG
         //    previousMouseState = mouse;
         //}
 
-        static public void Update()
+        static public void Update(float scale)
         {
             previousMouseState = currentMouseState;
             currentMouseState = Mouse.GetState();
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
-            mousePos = currentMouseState.Position;
+            mousePos = new Point((int)(currentMouseState.Position.X / scale), (int)(currentMouseState.Position.Y / scale));
             mouseCell = Draw.WindToCell(mousePos);
         }
 

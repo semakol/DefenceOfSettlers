@@ -16,7 +16,7 @@ namespace UlearnGameMG
         public List<Enemy> enemies = new();
         public List<Supplies> suplies = new();
         public Character choise = null;
-        public int Turn = 1;
+        public int Turn = 0;
         private Random random = new();
 
         public GameLogic() { }
@@ -93,17 +93,25 @@ namespace UlearnGameMG
             {
                 if (Turn == 0)
                 {
-                    DoAiAttack(enemy);
+                    //DoAiAttack(enemy);
                 }
                 var list = GetAiMove(enemy);
                 list = list.OrderByDescending(x => x.Item2).ToList();
-                enemy.Move(list[0].Item1);
+                enemy.Move(list[random.Next(0,2)].Item1);
+                CheckAiAttack(enemy);
             }
         }
 
-        public void DoAiAttack(Enemy enemy)
+        public void CheckAiAttack(Enemy enemy)
         {
-            
+            var list = new List<Point>();
+            foreach (var atPoint in enemy.FirstSpell.GetAttackPoints(map.RelativePosition(enemy.position)))
+            {
+                var point = atPoint + enemy.position;
+                if (suplies.Select(x => x.position).Contains(point)) list.Add(point);
+                if (characters.Select(x => x.position).Contains(point)) list.Add(point);
+            }
+            enemy.NextAttack = enemy.FirstSpell.GetSpPoints(list[0] - enemy.position).Select(x => (x.Item1 + list[0],x.Item2)).ToList();
         }
 
 
@@ -118,7 +126,7 @@ namespace UlearnGameMG
                 foreach (var atPoint in enemy.FirstSpell.GetAttackPoints(map.RelativePosition(enemy.position)))
                 {
                     if (suplies.Select(x => x.position).Contains(atPoint + point)) cost += 2;
-                    if (characters.Select(x => x.position).Contains(atPoint + point)) cost -= 1;
+                    if (characters.Select(x => x.position).Contains(atPoint + point)) cost += 1;
                 }
                 result.Add((point, cost));
             }
@@ -127,9 +135,9 @@ namespace UlearnGameMG
 
         public void EndTurn()
         {
-            Turn += 1;
             characters.ForEach(x => { x.castDo = false; x.moveDo = false; });
             DoAiTurn();
+            Turn += 1;
         }
 
         public void MapLoad(Map map) 
