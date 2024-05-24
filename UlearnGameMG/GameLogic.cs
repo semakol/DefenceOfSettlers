@@ -79,10 +79,26 @@ namespace UlearnGameMG
         public bool SpellActivate(Point fPoint, Spell spell, Point tPoint)
         {
             if (spell.GetAttackPoints(map.RelativePosition(choise.position)).All(x => x + fPoint != tPoint)) return false;
-            foreach (var atPoint in spell.GetSpPoints(InputManager.mouseCell - fPoint))
+            var dir = (tPoint - fPoint).ToVector2();
+            dir.Normalize();
+            var dirP = dir.ToPoint();
+            foreach (var atPoint in spell.GetSpPoints(dirP))
             {
-                var r = map.gameObjects.Where(x => x.position == tPoint + atPoint.Item1).FirstOrDefault();
-                if (r != default) r.Hp -= atPoint.Item2;
+                var r = map.GetGameObjectByPoint(tPoint + atPoint.Item1);
+                if (r != default)
+                {
+                    r.Hp -= atPoint.Item2;
+                    if (r.moving && spell.moving)
+                    {
+                        var r2 = map.GetGameObjectByPoint(r.position + dirP);
+                        if (r2 != default)
+                        {
+                            r2.Hp -= 1;
+                            r.Hp -= 1;
+                        }
+                        else if (!Map.OutOfBounds(r.position + dirP)) r.Move(r.position + dirP);
+                    }
+                }
             }
             return true;
         }
@@ -91,9 +107,9 @@ namespace UlearnGameMG
         {
             foreach (var enemy in enemies)
             {
-                if (Turn == 0)
+                if (Turn != 0)
                 {
-                    //DoAiAttack(enemy);
+                    DoAiAttack(enemy);
                 }
                 var list = GetAiMove(enemy);
                 list = list.OrderByDescending(x => x.Item2).ToList();
@@ -111,9 +127,17 @@ namespace UlearnGameMG
                 if (suplies.Select(x => x.position).Contains(point)) list.Add(point);
                 if (characters.Select(x => x.position).Contains(point)) list.Add(point);
             }
-            enemy.NextAttack = enemy.FirstSpell.GetSpPoints(list[0] - enemy.position).Select(x => (x.Item1 + list[0],x.Item2)).ToList();
+            enemy.NextAttack = enemy.FirstSpell.GetSpPoints(list[0] - enemy.position).Select(x => (x.Item1 + list[0] - enemy.position,x.Item2)).ToList();
         }
 
+        public void DoAiAttack(Enemy enemy)
+        {
+            foreach (var atPoint in enemy.NextAttack)
+            {
+                var r = map.gameObjects.Where(x => x.position == atPoint.Item1 + enemy.position).FirstOrDefault();
+                if (r != default) r.Hp -= atPoint.Item2;
+            }
+        }
 
         public List<(Point, int)> GetAiMove(Enemy enemy)
         {

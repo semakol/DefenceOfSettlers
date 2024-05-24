@@ -67,7 +67,7 @@ namespace UlearnGameMG
             var enemySpell = new List<Point>();
             foreach (var enemy in gameLogic.enemies)
             {
-                enemySpell.AddRange(enemy.NextAttack.Select(x => x.Item1));
+                enemySpell.AddRange(enemy.NextAttack.Select(x => x.Item1 + enemy.position));
             }
             var mapCells = map.mapCells;
             var list = new List<Point>(canSpell);
@@ -118,7 +118,7 @@ namespace UlearnGameMG
             gameInterface.Draw(spriteBatch);
             foreach (var enemy in gameLogic.enemies)
             {
-                foreach(var point in enemy.NextAttack)
+                foreach(var point in enemy.NextAttack.Select(x => (x.Item1 + enemy.position, x.Item2)))
                 {
                     spriteBatch.DrawString(Game1.font, point.Item2.ToString(),
                         new Vector2(
@@ -159,20 +159,20 @@ namespace UlearnGameMG
             spriteBatch.DrawString(Game1.font, InputManager.mousePos.ToString(), new Vector2(10, 30), new Color(255, 255, 255));
             spriteBatch.DrawString(Game1.font, playerInput.mode.ToString(), new Vector2(10, 50), new Color(255, 255, 255));
             spriteBatch.DrawString(Game1.font, gameLogic.Turn.ToString(), new Vector2(10, 70), new Color(255, 255, 255));
-            //foreach (var gameObject in map.gameObjects)
-            //{
-            //    spriteBatch.DrawString( Game1.font, gameObject.Hp.ToString(),
-            //    new Vector2(
-            //        (gameObject.position.X * size.X / 2) + (gameObject.position.Y * size.X / 2) + rift.X,
-            //        (gameObject.position.Y * size.Y / 2) - (gameObject.position.X * size.Y / 2) + rift.Y - 120),
-            //     new Color(0, 0, 0),
-            //     0,
-            //     new Vector2(0,0),
-            //     2,
-            //     0,
-            //     0
-            //    );
-            //}
+            foreach (var gameObject in map.gameObjects)
+            {
+                spriteBatch.DrawString(Game1.font, gameObject.Hp.ToString(),
+                new Vector2(
+                    (gameObject.position.X * size.X / 2) + (gameObject.position.Y * size.X / 2) + rift.X,
+                    (gameObject.position.Y * size.Y / 2) - (gameObject.position.X * size.Y / 2) + rift.Y - 120),
+                 new Color(0, 0, 0),
+                 0,
+                 new Vector2(0, 0),
+                 2,
+                 0,
+                 0
+                );
+            }
 
             //foreach (var enemy in gameLogic.enemies)
             //{

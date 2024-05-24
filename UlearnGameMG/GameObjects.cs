@@ -12,7 +12,7 @@ namespace UlearnGameMG
         public Point position;
         public int Hp;
         public bool canUse = false;
-        
+        public bool moving = false;
 
         public string textureName { get; set; }
         public Texture2D texture { get; set; }
@@ -43,6 +43,7 @@ namespace UlearnGameMG
             position = pos;
             this.Name = Name;
             canUse = true;
+            moving = true;
         }
 
         public void Heal() => Hp++;
@@ -64,6 +65,7 @@ namespace UlearnGameMG
             position = pos;
             this.Name = Name;
             canUse = true;
+            moving = true;
         }
 
         public void Heal() => Hp++;
@@ -97,14 +99,16 @@ namespace UlearnGameMG
         public int end;
         public List<(Point, int)> splashPoints;
         public bool straight;
+        public bool moving = true;
 
-        public Spell(string name, int start, int end, List<(Point, int)> spPoints, bool straight)
+        public Spell(string name, int start, int end, List<(Point, int)> spPoints, bool straight, bool? moving = null)
         {
             Name = name;
             this.start = start;
             this.end = end;
             splashPoints = spPoints;
             this.straight = straight;
+            this.moving = moving ?? true;
         }
 
         public List<Point> GetAttackPoints(List<Point> gameObjects)

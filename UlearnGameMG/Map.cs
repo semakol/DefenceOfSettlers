@@ -227,6 +227,11 @@ namespace UlearnGameMG
             return canMove;
         }
 
+        public GameObject GetGameObjectByPoint(Point point)
+        {
+            return gameObjects.Where(x => x.position == point).FirstOrDefault();
+        }
+
         public List<Point> RelativePosition(Point point)
         {
             return gameObjects.Select(x => x.position - point).ToList() ;
