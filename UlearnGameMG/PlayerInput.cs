@@ -18,50 +18,59 @@ namespace UlearnGameMG
         {
             this.logic = logic;
             this.gameInterface = gameInterface;
-            gameInterface.buttons["NextTurn"].SetAction(() => logic.EndTurn());
+        }
+
+        public void SetButtonsAction()
+        {
+            gameInterface.buttons["NextTurn"].SetAction(() => { if (logic.Win == 0) logic.EndTurn(); });
         }
 
         public void ClickHandler()
         {
-            if (InputManager.JustPressed(MouseInput.LeftButton))
+            if (logic.Win != 0)
             {
-                if (mode == Mode.Choise) 
-                { 
-                    if (logic.ChoiseCharacter(InputManager.mouseCell))
-                    {
-                        if (logic.choise.moveDo) mode = Mode.Attack;
-                        else mode = Mode.Move;
-                    }
-                }
-                else if (mode == Mode.Move) 
+                if (InputManager.JustPressed(MouseInput.LeftButton))
                 {
-                    if (logic.CharacterMove(InputManager.mouseCell))
+                    if (mode == Mode.Choise)
                     {
-                        mode = Mode.Attack;
+                        if (logic.ChoiseCharacter(InputManager.mouseCell))
+                        {
+                            if (logic.choise.moveDo) mode = Mode.Attack;
+                            else mode = Mode.Move;
+                        }
                     }
-                }
-                else if (mode == Mode.Attack)
-                {
-                    if (logic.CharacterSpell(InputManager.mouseCell))
+                    else if (mode == Mode.Move)
                     {
+                        if (logic.CharacterMove(InputManager.mouseCell))
+                        {
+                            mode = Mode.Attack;
+                        }
+                    }
+                    else if (mode == Mode.Attack)
+                    {
+                        if (logic.CharacterSpell(InputManager.mouseCell))
+                        {
+                            logic.ClearChoise();
+                            mode = Mode.Choise;
+                        }
+                    }
+                    if (Map.OutOfBounds(InputManager.mouseCell))
+                    {
+                        logic.ClearChoise();
                         mode = Mode.Choise;
                     }
+                    logic.CheckState();
                 }
-                if (Map.OutOfBounds(InputManager.mouseCell))
-                {
-                    logic.ClearChoise();
-                    mode = Mode.Choise;
-                }
+                if (InputManager.JustPressed(Keys.D1))
+                    if (mode != Mode.Choise)
+                        mode = (mode == Mode.Attack && !logic.choise.moveDo) ? Mode.Move : Mode.Attack;
+                if (InputManager.JustPressed(Keys.Escape))
+                    if (mode != Mode.Choise)
+                    {
+                        mode = Mode.Choise;
+                        logic.ClearChoise();
+                    }
             }
-            if (InputManager.JustPressed(Keys.D1))
-                if (mode != Mode.Choise)
-                    mode = (mode == Mode.Attack && !logic.choise.moveDo) ? Mode.Move : Mode.Attack;
-            if (InputManager.JustPressed(Keys.Escape))
-                if (mode != Mode.Choise)
-                {
-                    mode = Mode.Choise;
-                    logic.ClearChoise();
-                }
             gameInterface.Update();
         }
 

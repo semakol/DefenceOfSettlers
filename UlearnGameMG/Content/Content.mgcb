@@ -32,6 +32,18 @@
 /processorParam:TextureFormat=Compressed
 /build:File.spritefont;arial.spritefont
 
+#begin interface/Choise.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:interface/Choise.png
+
 #begin interface/Mark_tile.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -55,6 +67,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:interface/mark.png
+
+#begin interface/Move.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:interface/Move.png
+
+#begin interface/Next_Turn.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:interface/Next_Turn.png
 
 #begin interface/Play@2x.png
 /importer:TextureImporter
@@ -3163,4 +3199,11 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tiles/isometric_pixel_0230.png
+
+#begin Unispace.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Unispace.spritefont
 

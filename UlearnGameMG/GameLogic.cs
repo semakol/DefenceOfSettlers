@@ -16,6 +16,8 @@ namespace UlearnGameMG
         public List<Enemy> enemies = new();
         public List<Supplies> suplies = new();
         public Character choise = null;
+        public int Hp = 3;
+        public int Win = 0;
         public int Turn = 0;
         private Random random = new();
 
@@ -39,6 +41,7 @@ namespace UlearnGameMG
         public bool ChoiseCharacter(Point point)
         {
             var ch = characters.Where(x => x.position == point).FirstOrDefault();
+            if (Turn == 0) return false;
             if (ch == default || ch.castDo) { return false; }
             else { 
                 choise = ch;
@@ -49,6 +52,21 @@ namespace UlearnGameMG
         }
 
         public void ClearChoise() { choise = null; }
+
+        public void CheckState()
+        {
+            map.gameObjects.RemoveAll(x => x.Hp < 1);
+            characters.RemoveAll(x => x.Hp < 1);
+            enemies.RemoveAll(x => x.Hp < 1);
+            suplies.RemoveAll(x => { if (x.Hp < 1) { Hp -= 1; return true; } else return false; });
+            if (Hp < 1 || characters.Count == 0) Lose();
+        }
+
+        public void Lose()
+        {
+            Win = -1;
+
+        }
 
 
         public bool CharacterMove(Point point)
@@ -111,11 +129,13 @@ namespace UlearnGameMG
                 {
                     DoAiAttack(enemy);
                 }
+                CheckState();
                 var list = GetAiMove(enemy);
                 list = list.OrderByDescending(x => x.Item2).ToList();
                 enemy.Move(list[random.Next(0,2)].Item1);
                 CheckAiAttack(enemy);
             }
+            CheckState();
         }
 
         public void CheckAiAttack(Enemy enemy)
@@ -127,6 +147,8 @@ namespace UlearnGameMG
                 if (suplies.Select(x => x.position).Contains(point)) list.Add(point);
                 if (characters.Select(x => x.position).Contains(point)) list.Add(point);
             }
+            if (list.Count <= 0) enemy.NextAttack.Clear();
+            else
             enemy.NextAttack = enemy.FirstSpell.GetSpPoints(list[0] - enemy.position).Select(x => (x.Item1 + list[0] - enemy.position,x.Item2)).ToList();
         }
 
