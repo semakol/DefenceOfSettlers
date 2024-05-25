@@ -95,7 +95,6 @@ namespace UlearnGameMG
             {
                 if (InputManager.JustPressed(MouseInput.LeftButton) && EnterButton())
                 {
-                    Debug.WriteLine("click");
                     action.Invoke();
                     return true;
                 }
@@ -107,8 +106,32 @@ namespace UlearnGameMG
         {
             var result = new GameInterface();
             result.AddButton(new Button(new Point(10, 10), "interface/Next_Turn", "NextTurn"));
-            
             return result;
         } }
+
+        static public GameInterface EndGame
+        {
+            get
+            {
+                var result = new GameInterface();
+                result.AddButton(new Button(new Point(10, 540), "interface/Next_level", "NextLevel"));
+                result.AddButton(new Button(new Point(10, 600), "interface/Restart", "Restart"));
+                result.AddButton(new Button(new Point(10, 660), "interface/Main_menu", "MainMenu"));
+                return result;
+            }
+        }
+
+        static public GameInterface InMenu
+        {
+            get
+            {
+                var result = new GameInterface();
+                result.AddButton(new Button(new Point(20, 400), "interface/Start_game", "StartGame"));
+                result.AddButton(new Button(new Point(20, 460), "interface/Exit", "Exit"));
+                result.AddButton(new Button(new Point(20, 640), "interface/1920", "S1920"));
+                result.AddButton(new Button(new Point(160, 640), "interface/1280", "S1280"));
+                return result;
+            }
+        }
     }
 }

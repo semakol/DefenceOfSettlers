@@ -36,7 +36,7 @@ namespace UlearnGameMG
         public bool moveDo = false;
         public bool castDo = false;
 
-        public Character(string Name, Point pos, int hp, string textureName)
+        public Character(string Name, Point pos, int hp, string textureName, Spell spell)
         {
             Hp = hp;
             this.textureName = textureName;
@@ -44,6 +44,7 @@ namespace UlearnGameMG
             this.Name = Name;
             canUse = true;
             moving = true;
+            FirstSpell = spell;
         }
 
         public void Heal() => Hp++;
@@ -58,14 +59,15 @@ namespace UlearnGameMG
         public Spell SecondSpell;
         public List<(Point, int)> NextAttack = new();
 
-        public Enemy(string Name, Point pos, int hp, string textureName)
+        public Enemy(string Name, int hp, string textureName, Spell spell)
         {
             Hp = hp;
             this.textureName = textureName;
-            position = pos;
             this.Name = Name;
             canUse = true;
             moving = true;
+            position = new(-1, -1);
+            FirstSpell = spell;
         }
 
         public void Heal() => Hp++;
@@ -183,7 +185,7 @@ namespace UlearnGameMG
             {
                 var spPoints = new List<(Point, int)>();
                 spPoints.Add((new(0, 0), 2));
-                return new Spell("Shot", 2, 9, spPoints, true);
+                return new Spell("Shot", 2, 9, spPoints, true, false);
             } }
 
         static public Spell Sword { get

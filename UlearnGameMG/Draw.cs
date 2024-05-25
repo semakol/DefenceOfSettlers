@@ -18,12 +18,10 @@ namespace UlearnGameMG
         private Map map;
         private readonly GameLogic gameLogic;
         private readonly PlayerInput playerInput;
-        private readonly GameInterface gameInterface;
-        public Draw(GameLogic gameLogic, PlayerInput playerInput, GameInterface gameInterface) 
+        public Draw(GameLogic gameLogic, PlayerInput playerInput) 
         { 
             this.gameLogic = gameLogic;
             this.playerInput = playerInput;
-            this.gameInterface = gameInterface; 
         }
 
         public void LoadMap(Map map) 
@@ -69,6 +67,9 @@ namespace UlearnGameMG
             {
                 enemySpell.AddRange(enemy.NextAttack.Select(x => x.Item1 + enemy.position));
             }
+            if (playerInput.mode == Mode.Choise)
+                foreach (var obj in gameLogic.characters.Where(x => !x.castDo))
+                    canMove.Add(obj.position);
             var mapCells = map.mapCells;
             var list = new List<Point>(canSpell);
             list.AddRange(canMove);
@@ -99,7 +100,7 @@ namespace UlearnGameMG
                     attackBool = true;
                 }
                 else canSpell = gameLogic.choise.canCast;
-            foreach (var gameObject in map.gameObjects.OrderBy(x => x.position, comparer))
+            foreach (var gameObject in map.gameObjects.Where(x => !OutOfBounds(x.position)).OrderBy(x => x.position, comparer))
             {
                 spriteBatch.Draw(
                 gameObject.texture,
@@ -115,10 +116,14 @@ namespace UlearnGameMG
 
         public void DrawInterface(SpriteBatch spriteBatch)
         {
-            gameInterface.Draw(spriteBatch);
-            spriteBatch.DrawString(Game1.font, "Mode: " + playerInput.mode.ToString(), new Vector2(10, 60), new Color(255, 255, 255));
-            spriteBatch.DrawString(Game1.font, "Turn: " + gameLogic.Turn.ToString(), new Vector2(10, 90), new Color(255, 255, 255));
-            spriteBatch.DrawString(Game1.font, "Hp: " + gameLogic.Hp.ToString(), new Vector2(10, 120), new Color(255, 255, 255));
+            playerInput.gameInterface.Draw(spriteBatch);
+            if (gameLogic.Win != 0) playerInput.EndGameInterface.Draw(spriteBatch);
+            else spriteBatch.Draw(Game1.help, new Vector2(20, 600), new Color(255, 255, 255));
+            spriteBatch.DrawString(Game1.font, "Mode: " + playerInput.mode.ToString(), new Vector2(20, 70), new Color(255, 255, 255));
+            spriteBatch.DrawString(Game1.font, "Turn: " + gameLogic.Turn.ToString(), new Vector2(20, 100), new Color(255, 255, 255));
+            spriteBatch.DrawString(Game1.font, "Hp: " + gameLogic.Hp.ToString(), new Vector2(20, 130), new Color(255, 255, 255));
+            if (gameLogic.Win == 1) spriteBatch.DrawString(Game1.font2, "You Win", new Vector2(240, 15), new Color(255, 255, 255));
+            else if (gameLogic.Win == -1) spriteBatch.DrawString(Game1.font2, "You Lose", new Vector2(240, 15), new Color(255, 255, 255));
             foreach (var enemy in gameLogic.enemies)
             {
                 foreach(var point in enemy.NextAttack.Select(x => (x.Item1 + enemy.position, x.Item2)))
@@ -145,18 +150,13 @@ namespace UlearnGameMG
                         new Color(255, 10, 10));
             }
             if (InputManager.IsHeld(Keys.LeftAlt))
-            foreach (var obj in map.gameObjects.Where(x => x.GetType() != typeof(Barricade)))
+            foreach (var obj in map.gameObjects.Where(x => x.GetType() != typeof(Barricade) && !Map.OutOfBounds(x.position)))
             {
                 var point = (obj.position, obj.Hp);
                     spriteBatch.DrawString(Game1.font2, point.Item2.ToString(),
                 new Vector2(
-                (point.Item1.X * size.X / 2) + (point.Item1.Y * size.X / 2) + rift.X + 56,
-                (point.Item1.Y * size.Y / 2) - (point.Item1.X * size.Y / 2) + rift.Y - 52),
-                new Color(10, 10, 10));
-                    spriteBatch.DrawString(Game1.font2, point.Item2.ToString(),
-                new Vector2(
-                (point.Item1.X * size.X / 2) + (point.Item1.Y * size.X / 2) + rift.X + 56,
-                (point.Item1.Y * size.Y / 2) - (point.Item1.X * size.Y / 2) + rift.Y - 48),
+                (point.Item1.X * size.X / 2) + (point.Item1.Y * size.X / 2) + rift.X + 54,
+                (point.Item1.Y * size.Y / 2) - (point.Item1.X * size.Y / 2) + rift.Y - 50),
                 new Color(10, 10, 10));
                     spriteBatch.DrawString(Game1.font2, point.Item2.ToString(),
                 new Vector2(

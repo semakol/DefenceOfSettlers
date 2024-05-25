@@ -12,22 +12,33 @@ namespace UlearnGameMG
     {
         public GameLogic logic;
         public Mode mode = Mode.Choise;
-        public GameInterface gameInterface;
+        public GameInterface gameInterface = GameInterface.InGame;
+        public GameInterface EndGameInterface = GameInterface.EndGame;
 
-        public PlayerInput(GameLogic logic, GameInterface gameInterface)
+        public PlayerInput(GameLogic logic)
         {
             this.logic = logic;
-            this.gameInterface = gameInterface;
         }
 
-        public void SetButtonsAction()
+        public void SetButtonsAction(Action restart, Action menu, Action next)
         {
             gameInterface.buttons["NextTurn"].SetAction(() => { if (logic.Win == 0) logic.EndTurn(); });
+            EndGameInterface.buttons["Restart"].SetAction(restart);
+            EndGameInterface.buttons["MainMenu"].SetAction(menu);
+            EndGameInterface.buttons["NextLevel"].SetAction(next);
         }
 
-        public void ClickHandler()
+        public List<ITexturable> GetTexturables() 
+        {  
+            var result = new List<ITexturable>();
+            result.AddRange(gameInterface.GetTexturables());
+            result.AddRange(EndGameInterface.GetTexturables());
+            return result;
+        }
+
+        public void ClickHandler(Action menu)
         {
-            if (logic.Win != 0)
+            if (logic.Win == 0)
             {
                 if (InputManager.JustPressed(MouseInput.LeftButton))
                 {
@@ -61,19 +72,23 @@ namespace UlearnGameMG
                     }
                     logic.CheckState();
                 }
-                if (InputManager.JustPressed(Keys.D1))
+                if (InputManager.JustPressed(Keys.W))
                     if (mode != Mode.Choise)
                         mode = (mode == Mode.Attack && !logic.choise.moveDo) ? Mode.Move : Mode.Attack;
-                if (InputManager.JustPressed(Keys.Escape))
+                if (InputManager.JustPressed(Keys.Q))
                     if (mode != Mode.Choise)
                     {
                         mode = Mode.Choise;
                         logic.ClearChoise();
                     }
+                if (InputManager.JustPressed(Keys.Escape)) 
+                {
+                    menu.Invoke();
+                }
+                gameInterface.Update();
             }
-            gameInterface.Update();
+            else EndGameInterface.Update();
         }
-
         
 
     }

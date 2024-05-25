@@ -14,8 +14,12 @@ namespace UlearnGameMG
         public Map map;
         public List<Character> characters = new();
         public List<Enemy> enemies = new();
+        public Queue<Enemy> enemiesReserv = new();
+        public List<Point> spawnPoints = new();
         public List<Supplies> suplies = new();
         public Character choise = null;
+        public int levelN;
+        public int spawn = 0;
         public int Hp = 3;
         public int Win = 0;
         public int Turn = 0;
@@ -33,9 +37,35 @@ namespace UlearnGameMG
             suplies.Add(character);
         }
 
-        public void AddEnemies(Enemy character)
+        public void AddEnemies(Enemy character, Point pos)
         {
+            character.position = pos;
             enemies.Add(character);
+        }
+
+        public void LevelLoad(Level level)
+        {
+            level.enemies.ForEach(x => enemiesReserv.Enqueue(x));
+            spawnPoints = level.spawnPoints;
+            characters = level.characters;
+            suplies = level.suplies;
+            levelN = level.level;
+        }
+
+        public void EnemySpawn()
+        {
+            int i = 0;
+            while (enemies.Count < 3 && i < 2) 
+            { 
+                i++;
+                while (map != null && map.GetGameObjectByPoint(spawnPoints[spawn % spawnPoints.Count]) != default)
+                {
+                    spawn++;
+                }
+                if (enemiesReserv.Count != 0)
+                    AddEnemies(enemiesReserv.Dequeue(), spawnPoints[spawn % spawnPoints.Count]);
+                spawn++;
+            }
         }
 
         public bool ChoiseCharacter(Point point)
@@ -59,13 +89,19 @@ namespace UlearnGameMG
             characters.RemoveAll(x => x.Hp < 1);
             enemies.RemoveAll(x => x.Hp < 1);
             suplies.RemoveAll(x => { if (x.Hp < 1) { Hp -= 1; return true; } else return false; });
-            if (Hp < 1 || characters.Count == 0) Lose();
+            if (Hp < 1 || characters.Count == 0) GameLose();
+            if (enemiesReserv.Count == 0 && enemies.Count == 0) GameWin();
         }
 
-        public void Lose()
+        public void GameLose()
         {
             Win = -1;
 
+        }
+
+        public void GameWin()
+        {
+            Win = 1;
         }
 
 
@@ -109,9 +145,10 @@ namespace UlearnGameMG
                     if (r.moving && spell.moving)
                     {
                         var r2 = map.GetGameObjectByPoint(r.position + dirP);
-                        if (r2 != default)
+                        if (Map.OutOfBounds(r.position + dirP) || r2 != default)
                         {
-                            r2.Hp -= 1;
+                            if (r2 != default)
+                                r2.Hp -= 1;
                             r.Hp -= 1;
                         }
                         else if (!Map.OutOfBounds(r.position + dirP)) r.Move(r.position + dirP);
@@ -132,7 +169,8 @@ namespace UlearnGameMG
                 CheckState();
                 var list = GetAiMove(enemy);
                 list = list.OrderByDescending(x => x.Item2).ToList();
-                enemy.Move(list[random.Next(0,2)].Item1);
+                if (list.Count > 3)
+                    enemy.Move(list[random.Next(0,2)].Item1);
                 CheckAiAttack(enemy);
             }
             CheckState();
@@ -183,6 +221,8 @@ namespace UlearnGameMG
         {
             characters.ForEach(x => { x.castDo = false; x.moveDo = false; });
             DoAiTurn();
+            if (Turn > 0)
+                EnemySpawn();
             Turn += 1;
         }
 
@@ -190,8 +230,9 @@ namespace UlearnGameMG
         {
             this.map = map;
             characters.ForEach(x => map.GameObjectAdd(x));
-            enemies.ForEach(x => map.GameObjectAdd(x));
+            enemiesReserv.ToList().ForEach(x => map.GameObjectAdd(x));
             suplies.ForEach(x => map.GameObjectAdd(x));
+            EnemySpawn();
         }
     }
 
