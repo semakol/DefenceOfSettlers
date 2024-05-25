@@ -55,17 +55,18 @@ namespace UlearnGameMG
         public void EnemySpawn()
         {
             int i = 0;
-            while (enemies.Count < 3 && i < 2) 
-            { 
-                i++;
-                while (map != null && map.GetGameObjectByPoint(spawnPoints[spawn % spawnPoints.Count]) != default)
-                {
+            if (enemiesReserv.Count != 0)
+                while (enemies.Count < 3 && i < 2) 
+                { 
+                    i++;
+                    while (map != null && map.GetGameObjectByPoint(spawnPoints[spawn % spawnPoints.Count]) != default)
+                    {
+                        spawn++;
+                    }
+                    if (enemiesReserv.Count != 0)
+                        AddEnemies(enemiesReserv.Dequeue(), spawnPoints[spawn % spawnPoints.Count]);
                     spawn++;
                 }
-                if (enemiesReserv.Count != 0)
-                    AddEnemies(enemiesReserv.Dequeue(), spawnPoints[spawn % spawnPoints.Count]);
-                spawn++;
-            }
         }
 
         public bool ChoiseCharacter(Point point)
@@ -136,7 +137,7 @@ namespace UlearnGameMG
             var dir = (tPoint - fPoint).ToVector2();
             dir.Normalize();
             var dirP = dir.ToPoint();
-            foreach (var atPoint in spell.GetSpPoints(dirP))
+            foreach (var atPoint in spell.GetSpPoints(dirP).OrderByDescending(x => x.Item1.ToVector2().LengthSquared()))
             {
                 var r = map.GetGameObjectByPoint(tPoint + atPoint.Item1);
                 if (r != default)
@@ -166,7 +167,6 @@ namespace UlearnGameMG
                 {
                     DoAiAttack(enemy);
                 }
-                CheckState();
                 var list = GetAiMove(enemy);
                 list = list.OrderByDescending(x => x.Item2).ToList();
                 if (list.Count > 3)

@@ -20,6 +20,7 @@ namespace UlearnGameMG
         static public SpriteFont font2;
         static public Texture2D tile_mark;
         static public Texture2D logo;
+        static public Texture2D lor;
         static public Texture2D help;
         public Vector2 Scale;
         private Matrix screenXform;
@@ -69,6 +70,7 @@ namespace UlearnGameMG
             font = Content.Load<SpriteFont>("arial");
             font2 = Content.Load<SpriteFont>("unispace");
             logo = Content.Load<Texture2D>("interface/Logo");
+            lor = Content.Load<Texture2D>("interface/lor");
             tile_mark = Content.Load<Texture2D>("interface/Mark_tile");
             help = Content.Load<Texture2D>("interface/help");
             foreach (var item in InMenu.GetTexturables())
@@ -131,6 +133,10 @@ namespace UlearnGameMG
                 _spriteBatch.Draw(
                 logo,
                 new Vector2(240, 50),
+                new Color(255, 255, 255));
+                _spriteBatch.Draw(
+                lor,
+                new Vector2(600, 400),
                 new Color(255, 255, 255));
             }
             _spriteBatch.End();

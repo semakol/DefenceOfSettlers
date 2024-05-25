@@ -81,7 +81,11 @@ namespace UlearnGameMG
                         mode = Mode.Choise;
                         logic.ClearChoise();
                     }
-                if (InputManager.JustPressed(Keys.Escape)) 
+                if (InputManager.JustPressed(Keys.Space))
+                {
+                    logic.EndTurn();
+                }
+                if (InputManager.JustPressed(Keys.P)) 
                 {
                     menu.Invoke();
                 }

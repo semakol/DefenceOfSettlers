@@ -118,10 +118,11 @@ namespace UlearnGameMG
         {
             playerInput.gameInterface.Draw(spriteBatch);
             if (gameLogic.Win != 0) playerInput.EndGameInterface.Draw(spriteBatch);
-            else spriteBatch.Draw(Game1.help, new Vector2(20, 600), new Color(255, 255, 255));
+            else spriteBatch.Draw(Game1.help, new Vector2(20, 580), new Color(255, 255, 255));
             spriteBatch.DrawString(Game1.font, "Mode: " + playerInput.mode.ToString(), new Vector2(20, 70), new Color(255, 255, 255));
             spriteBatch.DrawString(Game1.font, "Turn: " + gameLogic.Turn.ToString(), new Vector2(20, 100), new Color(255, 255, 255));
             spriteBatch.DrawString(Game1.font, "Hp: " + gameLogic.Hp.ToString(), new Vector2(20, 130), new Color(255, 255, 255));
+            spriteBatch.DrawString(Game1.font, "Level: " + gameLogic.levelN.ToString(), new Vector2(20, 160), new Color(255, 255, 255));
             if (gameLogic.Win == 1) spriteBatch.DrawString(Game1.font2, "You Win", new Vector2(240, 15), new Color(255, 255, 255));
             else if (gameLogic.Win == -1) spriteBatch.DrawString(Game1.font2, "You Lose", new Vector2(240, 15), new Color(255, 255, 255));
             foreach (var enemy in gameLogic.enemies)

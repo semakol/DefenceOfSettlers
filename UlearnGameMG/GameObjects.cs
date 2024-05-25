@@ -194,5 +194,25 @@ namespace UlearnGameMG
                 spPoints.Add((new(0, 0), 1));
                 return new Spell("Sword", 1, 2, spPoints, false);
             } }
+        static public Spell Spear
+        {
+            get
+            {
+                var spPoints = new List<(Point, int)>();
+                spPoints.Add((new(0, 0), 1));
+                spPoints.Add((new(1, 0), 2));
+                return new Spell("Sword", 1, 3, spPoints, false);
+            }
+        }
+        static public Spell LongSword
+        {
+            get
+            {
+                var spPoints = new List<(Point, int)>();
+                spPoints.Add((new(0, 0), 2));
+                spPoints.Add((new(1, 0), 2));
+                return new Spell("Sword", 1, 2, spPoints, false);
+            }
+        }
     }
 }
