@@ -84,11 +84,12 @@ namespace UlearnGameMG
 
         public void ClearChoise() { choise = null; }
 
-        public void CheckState()
+        public void CheckState(bool check = true)
         {
             map.gameObjects.RemoveAll(x => x.Hp < 1);
             characters.RemoveAll(x => x.Hp < 1);
-            enemies.RemoveAll(x => x.Hp < 1);
+            if (check) 
+                enemies.RemoveAll(x => x.Hp < 1);
             suplies.RemoveAll(x => { if (x.Hp < 1) { Hp -= 1; return true; } else return false; });
             if (Hp < 1 || characters.Count == 0) GameLose();
             if (enemiesReserv.Count == 0 && enemies.Count == 0) GameWin();
@@ -146,7 +147,7 @@ namespace UlearnGameMG
                     if (r.moving && spell.moving)
                     {
                         var r2 = map.GetGameObjectByPoint(r.position + dirP);
-                        if (Map.OutOfBounds(r.position + dirP) || r2 != default)
+                        if (r2 != default)
                         {
                             if (r2 != default)
                                 r2.Hp -= 1;
@@ -167,6 +168,7 @@ namespace UlearnGameMG
                 {
                     DoAiAttack(enemy);
                 }
+                CheckState(false);
                 var list = GetAiMove(enemy);
                 list = list.OrderByDescending(x => x.Item2).ToList();
                 if (list.Count > 3)

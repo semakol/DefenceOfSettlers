@@ -22,10 +22,12 @@ namespace UlearnGameMG
         static public Texture2D logo;
         static public Texture2D lor;
         static public Texture2D help;
+        static public Texture2D fon;
+        static public Texture2D lorB;
         public Vector2 Scale;
         private Matrix screenXform;
         private GameLogic Game;
-        private Draw draw;
+        private DrawGame draw;
         private PlayerInput pInput;
         public ContentLoader loader;
         private bool IsInGame = false;
@@ -60,6 +62,7 @@ namespace UlearnGameMG
             InMenu.buttons["StartGame"].SetAction(() => { InitLevel(1); IsInGame = true; });
             InMenu.buttons["S1920"].SetAction(() => { SetS1920(); });
             InMenu.buttons["S1280"].SetAction(() => { SetS1280(); });
+            Window.Title = "Defense of settlers";
             base.Initialize();
         }
 
@@ -71,8 +74,10 @@ namespace UlearnGameMG
             font2 = Content.Load<SpriteFont>("unispace");
             logo = Content.Load<Texture2D>("interface/Logo");
             lor = Content.Load<Texture2D>("interface/lor");
+            fon = Content.Load<Texture2D>("interface/fon");
             tile_mark = Content.Load<Texture2D>("interface/Mark_tile");
             help = Content.Load<Texture2D>("interface/help");
+            lorB = Content.Load<Texture2D>("interface/lorB");
             foreach (var item in InMenu.GetTexturables())
                 item.TextureLoad(Content.Load<Texture2D>(item.textureName));
         }
@@ -129,15 +134,7 @@ namespace UlearnGameMG
             }
             else
             {
-                InMenu.Draw(_spriteBatch);
-                _spriteBatch.Draw(
-                logo,
-                new Vector2(240, 50),
-                new Color(255, 255, 255));
-                _spriteBatch.Draw(
-                lor,
-                new Vector2(600, 400),
-                new Color(255, 255, 255));
+                DrawGame.DrawMenu(_spriteBatch, InMenu);
             }
             _spriteBatch.End();
 

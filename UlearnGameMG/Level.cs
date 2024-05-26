@@ -141,6 +141,62 @@ namespace UlearnGameMG
                 result.suplies.Add(new Supplies(new(6, 6), 1, "objects/tile_001"));
                 return result;
             }
+            else if (level == 3)
+            {
+                var result = new Level(3);
+                result.SetCells(new string[8, 8]
+                { //151, 160, 157, 073, 080, 021
+                {"063", "054", "055", "052", "052", "055", "054", "063"},
+                {"054", "055", "055", "052", "054", "055", "045", "054"},
+                {"055", "055", "055", "052", "052", "055", "055", "054"},
+                {"052", "054", "055", "055", "052", "055", "055", "054"},
+                {"055", "055", "055", "052", "052", "055", "055", "055"},
+                {"045", "045", "063", "052", "055", "055", "055", "052"},
+                {"053", "053", "045", "052", "052", "055", "055", "045"},
+                {"056", "053", "045", "055", "054", "055", "054", "063"}
+                });
+                result.SetObjects(new string[8, 8]
+                {
+                {"68", "65", "..", "..", "..", "..", "67", "64"},
+                {"43", "..", "..", "..", "..", "..", "48", "65"},
+                {"..", "..", "..", "..", "..", "..", "..", ".."},
+                {"..", "..", "..", "..", "..", "..", "..", "62"},
+                {"..", "..", "..", "..", "..", "..", "..", ".."},
+                {"65", "..", "..", "..", "..", "..", "..", ".."},
+                {"47", "..", "..", "..", "..", "..", "..", "49"},
+                {"46", "..", "62", "..", "..", "65", "..", "62"}
+                });
+                result.characters.Add(new Character("Archer", new Point(5, 3), 2, "characters/Huntress2", Spell.Shot));
+                result.characters.Add(new Character("SwordsMan", new Point(2, 3), 3, "characters/Warrior", Spell.Sword));
+                result.characters.Add(new Character("Archer", new Point(6, 3), 2, "characters/Huntress", Spell.Spear));
+                result.spawnPoints.Add(new Point(1, 7));
+                result.spawnPoints.Add(new Point(6, 7));
+                result.spawnPoints.Add(new Point(0, 2));
+                result.spawnPoints.Add(new Point(0, 5));
+                result.spawnPoints.Add(new Point(7, 2));
+                result.spawnPoints.Add(new Point(7, 5));
+                result.enemies.Add(new Enemy("Enemy1", 3, "characters/EvilWarrior", Spell.LongSword));
+                result.enemies.Add(new Enemy("Enemy2", 3, "characters/EvilWarrior2", Spell.Sword));
+                result.enemies.Add(new Enemy("Enemy3", 2, "characters/EvilMage", Spell.Shot));
+                result.enemies.Add(new Enemy("Enemy4", 3, "characters/EvilWarrior2", Spell.Sword));
+                result.enemies.Add(new Enemy("Enemy5", 3, "characters/EvilWarrior", Spell.LongSword));
+                result.enemies.Add(new Enemy("Enemy6", 2, "characters/EvilMage", Spell.Shot));
+                result.enemies.Add(new Enemy("Enemy6", 2, "characters/EvilMage", Spell.Shot));
+                result.enemies.Add(new Enemy("Enemy6", 2, "characters/EvilMage", Spell.Shot));
+                result.enemies.Add(new Enemy("Enemy4", 3, "characters/EvilWarrior2", Spell.Sword));
+                result.enemies.Add(new Enemy("Enemy5", 3, "characters/EvilWarrior", Spell.LongSword));
+                result.enemies.Add(new Enemy("Enemy6", 2, "characters/EvilMage", Spell.Shot));
+                result.enemies.Add(new Enemy("Enemy5", 5, "characters/EvilWarrior", Spell.LongSword));
+                result.enemies.Add(new Enemy("Enemy6", 4, "characters/EvilMage", Spell.Shot));
+                result.suplies.Add(new Supplies(new(3, 3), 1, "objects/tile_001"));
+                result.suplies.Add(new Supplies(new(3, 4), 1, "objects/tile_001"));
+                result.suplies.Add(new Supplies(new(4, 3), 1, "objects/tile_001"));
+                result.suplies.Add(new Supplies(new(4, 4), 1, "objects/tile_001"));
+                result.suplies.Add(new Supplies(new(5, 0), 1, "objects/tile_001"));
+                result.suplies.Add(new Supplies(new(3, 7), 1, "objects/tile_001"));
+                result.suplies.Add(new Supplies(new(1, 3), 1, "objects/tile_001"));
+                return result;
+            }
             else return new Level(1);
         }    
         

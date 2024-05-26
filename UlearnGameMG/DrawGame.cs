@@ -10,7 +10,7 @@ using static UlearnGameMG.Map;
 
 namespace UlearnGameMG
 {
-    public class Draw
+    public class DrawGame
     {
         static public Vector2 size = new Vector2(126, 75);
         static private Vector2 rift = new Vector2(140, 300);
@@ -18,7 +18,7 @@ namespace UlearnGameMG
         private Map map;
         private readonly GameLogic gameLogic;
         private readonly PlayerInput playerInput;
-        public Draw(GameLogic gameLogic, PlayerInput playerInput) 
+        public DrawGame(GameLogic gameLogic, PlayerInput playerInput) 
         { 
             this.gameLogic = gameLogic;
             this.playerInput = playerInput;
@@ -207,6 +207,28 @@ namespace UlearnGameMG
             //        );
             //    }
             //}
+        }
+
+        static public void DrawMenu(SpriteBatch spriteBatch, GameInterface InMenu)
+        {
+            spriteBatch.Draw(
+                Game1.fon,
+                new Vector2(0, -20),
+                new Color(255, 255, 255));
+            InMenu.Draw(spriteBatch);
+            spriteBatch.Draw(
+            Game1.logo,
+            new Vector2(240, 50),
+            new Color(255, 255, 255));
+            if (new Rectangle(1200, 640, 70, 70).Contains(InputManager.mousePos))
+                spriteBatch.Draw(
+                Game1.lor,
+                new Vector2(600, 400),
+                new Color(255, 255, 255));
+            spriteBatch.Draw(
+            Game1.lorB,
+            new Vector2(1200, 640),
+            new Color(255, 255, 255));
         }
 
         static private Vector2 CordToIso(Vector2 position)

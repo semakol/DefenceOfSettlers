@@ -16,7 +16,7 @@ namespace UlearnGameMG
         static public MouseState currentMouseState = Mouse.GetState();
         static public MouseState previousMouseState = Mouse.GetState();
         static public Point mousePos = currentMouseState.Position;
-        static public Point mouseCell = Draw.WindToCell(mousePos);
+        static public Point mouseCell = DrawGame.WindToCell(mousePos);
 
         //public InputManager(MouseState mouse, KeyboardState keyboard)
         //{
@@ -33,7 +33,7 @@ namespace UlearnGameMG
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
             mousePos = new Point((int)(currentMouseState.Position.X / scale), (int)(currentMouseState.Position.Y / scale));
-            mouseCell = Draw.WindToCell(mousePos);
+            mouseCell = DrawGame.WindToCell(mousePos);
         }
 
         static public bool IsPressed(Keys key)
